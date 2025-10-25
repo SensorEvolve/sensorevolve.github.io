@@ -1,0 +1,204 @@
+{
+  "site": {
+    "url": "https://landonorris.com/",
+    "title": "2025 McLaren Formula 1 Driver — Lando Norris",
+    "description": "Official hub for British racing star Lando Norris: breaking news, 2025 race wins, exclusive merch, videos and behind-the-scenes access.",
+    "platform": "Webflow",
+    "analyzed": "2025-10-25"
+  },
+  "colorPalette": {
+    "primary": {
+      "lime": "#d2ff00",
+      "limeOff": "#b2c73a",
+      "limeZero": "#d2ff0000",
+      "darkGreen": "#282c20",
+      "black": "#111112",
+      "white": "#f4f4ed"
+    },
+    "secondary": {
+      "orange": "#ff6b00",
+      "cream": "#efefe5"
+    },
+    "neutrals": {
+      "grey1": "#ebeee0",
+      "grey2": "#c8cbbd",
+      "greyOnTrack": "#b9bbad",
+      "greenLight": "#ebeee0",
+      "greenOffWhite1": "#dde1d2",
+      "greenOffWhite2": "#b4b8a5",
+      "darkGreenTint1": "#3b3c38",
+      "darkGreenTint2": "#535450"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "primary": "Mona Sans Variable",
+      "display": "Brier"
+    },
+    "scale": {
+      "impact": "7.9375rem",
+      "h1": "4rem",
+      "h2": "4.5rem",
+      "h3": "2rem",
+      "h4": "1.5rem",
+      "h5": "1.2rem",
+      "h6": "1rem",
+      "medium": "2.76rem",
+      "regular": "1.6rem",
+      "eyebrow": "0.578125rem"
+    }
+  },
+  "spacing": {
+    "padding": {
+      "mini": "1rem",
+      "small": "2rem",
+      "medium": "3rem",
+      "large": "4rem",
+      "xlarge": "5rem",
+      "container": "1.25rem"
+    },
+    "gap": {
+      "default": "1.25rem",
+      "medium": "2rem"
+    }
+  },
+  "borderRadius": {
+    "small": "1rem",
+    "medium": "3rem",
+    "large": "6.25rem"
+  },
+  "animations": {
+    "duration": "0.75s",
+    "easing": "cubic-bezier(0.65, 0.05, 0, 1)",
+    "default": "0.75s cubic-bezier(0.65, 0.05, 0, 1)"
+  },
+  "layout": {
+    "maxWidth": "1920px",
+    "minWidth": "992px",
+    "containerPadding": "2rem",
+    "sectionPadding": "calc(3.5rem + (1.25rem * 2))"
+  },
+  "techStack": {
+    "platform": "Webflow",
+    "libraries": {
+      "jquery": "3.5.1",
+      "lenis": "custom",
+      "rive": "2.26.4",
+      "webgl": "custom Three.js build",
+      "draco": "mesh compression"
+    },
+    "frameworks": {
+      "cms": "Webflow CMS",
+      "builder": "Webflow Designer"
+    }
+  },
+  "assets": {
+    "cdn": {
+      "primary": "cdn.prod.website-files.com",
+      "custom": "lando.itsoffbrand.io",
+      "jquery": "d3e54v103j8qbb.cloudfront.net"
+    },
+    "formats": {
+      "images": "WebP",
+      "fonts": "WOFF2",
+      "3d": "GLB (Draco compressed)",
+      "animations": "RIV"
+    }
+  },
+  "features": {
+    "3d": {
+      "helmets": true,
+      "tracks": true,
+      "pbr": true,
+      "hdr": true
+    },
+    "animations": {
+      "smoothScroll": true,
+      "rive": true,
+      "css": true,
+      "webgl": true
+    },
+    "interactive": {
+      "horizontalScroll": true,
+      "hoverEffects": true,
+      "parallax": true
+    }
+  },
+  "components": [
+    {
+      "name": "Hero Section",
+      "type": "full-screen",
+      "features": ["3D helmet", "large typography", "dark background"]
+    },
+    {
+      "name": "Image Grid",
+      "type": "bento box",
+      "features": ["varied sizes", "hover effects", "captions"]
+    },
+    {
+      "name": "Helmet Viewer",
+      "type": "3D interactive",
+      "features": ["WebGL", "PBR materials", "HDR lighting", "multiple textures"]
+    },
+    {
+      "name": "Horizontal Gallery",
+      "type": "scroll container",
+      "features": ["momentum scroll", "snap points", "large images"]
+    },
+    {
+      "name": "Navigation",
+      "type": "fixed header",
+      "features": ["transparent to solid", "lime highlights", "mobile menu"]
+    },
+    {
+      "name": "Footer",
+      "type": "multi-column",
+      "features": ["social links", "custom SVG mask", "dark background"]
+    }
+  ],
+  "designPatterns": {
+    "colorUsage": "80% dark backgrounds, 15% text, 5% lime accents",
+    "imageStyle": "high-quality photography, bento grid layouts",
+    "typography": "bold display fonts, generous spacing",
+    "animations": "subtle and smooth, 0.75s transitions",
+    "layout": "section-based, full-bleed images, horizontal scrolling"
+  },
+  "performance": {
+    "variableFonts": true,
+    "webpImages": true,
+    "lazyLoading": true,
+    "deferredScripts": true,
+    "compression": "Draco for 3D, minified CSS/JS"
+  },
+  "recommendations": {
+    "tools": [
+      "Webflow (for no-code)",
+      "Figma (for design)",
+      "Lenis (for smooth scroll)",
+      "Rive (for vector animations)",
+      "Three.js (for 3D)",
+      "Blender (for 3D modeling)"
+    ],
+    "fonts": [
+      "Mona Sans Variable (or Inter Variable)",
+      "Brier (or Anton, Bebas Neue)"
+    ],
+    "hosting": [
+      "Webflow Hosting",
+      "Vercel",
+      "Netlify"
+    ]
+  },
+  "keyTakeaways": [
+    "Signature lime green creates strong brand identity",
+    "Dark themes work well for sports/racing brands",
+    "3D elements create memorable premium experiences",
+    "Webflow + custom code = professional results quickly",
+    "Smooth scrolling is baseline user expectation",
+    "Variable fonts improve performance significantly",
+    "Large bold typography commands attention",
+    "Horizontal scroll galleries feel modern and engaging",
+    "PBR rendering makes 3D models look realistic",
+    "Rive animations provide scalable interactive graphics"
+  ]
+}

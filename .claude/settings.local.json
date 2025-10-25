@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__browser-use__browser_navigate",
+      "mcp__browser-use__browser_screenshot",
+      "mcp__browser-use__browser_get_markdown",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_close",
+      "Bash(start index.html)",
+      "Bash(awk:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
