@@ -301,3 +301,17 @@ Want to improve this template?
 **Built with 💜 by SensorEvolve**
 
 *For questions or feedback, reach out at hello@sensorevolve.com*
+
+## Browser Sync
+Best for: Cross-device testing, professional workflow
+
+  Pros:
+  - Syncs scroll/clicks across devices
+  - Test on phone/tablet simultaneously
+  - Auto-refresh on save
+  - Shows external IP (test on other devices)
+
+  How to use:
+  npx browser-sync start --server --files "*.html, *.css, *.js"
+
+
