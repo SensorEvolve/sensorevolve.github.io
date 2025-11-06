@@ -54,17 +54,11 @@ class Globe {
     }
 
     loadTexturesAndCreateGlobe() {
-        // Load Earth textures - using proper Earth map, not rainbow
-        const colorMap = this.textureLoader.load('./assets/textures/00_earthmap1k.jpg');
-        const otherMap = this.textureLoader.load('./assets/textures/04_rainbow1k.jpg');
-        const elevMap = this.textureLoader.load('./assets/textures/01_earthbump1k.jpg');
-        const alphaMap = this.textureLoader.load('./assets/textures/02_earthspec1k.jpg');
-
         // Create wireframe backdrop - scale 2x from original (radius: 1 → 2)
         this.createWireframe();
 
-        // Create Earth with custom shaders - scale 2x
-        this.createShaderEarth(colorMap, otherMap, elevMap, alphaMap);
+        // Create Earth with colored dots only - no textures
+        this.createColoredDotsEarth();
 
         // Create starfield
         this.createStarfield();
@@ -89,32 +83,54 @@ class Globe {
         this.globe = this.wireframe;
     }
 
-    createShaderEarth(colorMap, otherMap, elevMap, alphaMap) {
+    createColoredDotsEarth() {
         // Scale 2x: radius 1 → 2, detail 120 (keep high detail!)
         const detail = 120;
         const pointsGeo = new THREE.IcosahedronGeometry(2, detail);
 
-        // Custom vertex shader with mouse interaction from vertex-earth
+        // Add colors to vertices
+        const colors = [];
+        const positions = pointsGeo.attributes.position.array;
+        const uvs = pointsGeo.attributes.uv.array;
+
+        for (let i = 0; i < positions.length; i += 3) {
+            const u = uvs[(i / 3) * 2];
+            const v = uvs[(i / 3) * 2 + 1];
+
+            // Create colorful gradient based on UV coordinates
+            // Hue varies with longitude (u), brightness with latitude (v)
+            const hue = u; // 0-1 gives full color spectrum
+            const saturation = 0.7 + Math.random() * 0.3;
+            const lightness = 0.4 + v * 0.4;
+
+            const color = new THREE.Color();
+            color.setHSL(hue, saturation, lightness);
+
+            colors.push(color.r, color.g, color.b);
+        }
+
+        pointsGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+        // Custom vertex shader without textures
         const vertexShader = `
             uniform float size;
-            uniform sampler2D elevTexture;
             uniform vec2 mouseUV;
 
+            attribute vec3 color;
+
+            varying vec3 vColor;
             varying vec2 vUv;
             varying float vVisible;
             varying float vDist;
 
             void main() {
                 vUv = uv;
+                vColor = color;
                 vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                float elv = texture2D(elevTexture, vUv).r;
                 vec3 vNormal = normalMatrix * normal;
 
                 // Only show front-facing vertices
                 vVisible = step(0.0, dot(-normalize(mvPosition.xyz), normalize(vNormal)));
-
-                // Apply elevation
-                mvPosition.z += 0.35 * elv;
 
                 // Mouse interaction - bulge effect near cursor
                 float dist = distance(mouseUV, vUv);
@@ -131,12 +147,9 @@ class Globe {
             }
         `;
 
-        // Custom fragment shader with color mixing from vertex-earth
+        // Custom fragment shader for colored dots
         const fragmentShader = `
-            uniform sampler2D colorTexture;
-            uniform sampler2D alphaTexture;
-            uniform sampler2D otherTexture;
-
+            varying vec3 vColor;
             varying vec2 vUv;
             varying float vVisible;
             varying float vDist;
@@ -145,27 +158,25 @@ class Globe {
                 // Discard back-facing points
                 if (floor(vVisible + 0.1) == 0.0) discard;
 
-                float alpha = 1.0 - texture2D(alphaTexture, vUv).r;
-                vec3 color = texture2D(colorTexture, vUv).rgb;
-                vec3 other = texture2D(otherTexture, vUv).rgb;
+                vec3 color = vColor;
 
-                // Mix in colorful texture near mouse cursor
+                // Enhance brightness near mouse cursor
                 float thresh = 0.04;
                 if (vDist < thresh) {
-                    color = mix(color, other, (thresh - vDist) * 50.0);
+                    float intensity = (thresh - vDist) / thresh;
+                    color = mix(color, vec3(1.0, 1.0, 1.0), intensity * 0.5);
                 }
+
+                // Add glow effect to dots
+                float dist = length(gl_PointCoord - vec2(0.5));
+                float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
 
                 gl_FragColor = vec4(color, alpha);
             }
         `;
 
-        // Scale 2x: size 4.0 → 8.0
         const uniforms = {
             size: { type: 'f', value: 8.0 },
-            colorTexture: { type: 't', value: colorMap },
-            otherTexture: { type: 't', value: otherMap },
-            elevTexture: { type: 't', value: elevMap },
-            alphaTexture: { type: 't', value: alphaMap },
             mouseUV: { type: 'v2', value: new THREE.Vector2(0.0, 0.0) }
         };
 
@@ -175,7 +186,10 @@ class Globe {
             uniforms: uniforms,
             vertexShader,
             fragmentShader,
-            transparent: true
+            transparent: true,
+            vertexColors: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending
         });
 
         this.earthPoints = new THREE.Points(pointsGeo, pointsMat);
