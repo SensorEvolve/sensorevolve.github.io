@@ -135,27 +135,17 @@ class Globe {
                 // Discard back-facing points
                 if (floor(vVisible + 0.1) == 0.0) discard;
 
-                // Get color from Earth texture
-                vec3 earthColor = texture2D(colorTexture, vUv).rgb;
+                // Get color from Earth texture - keep it simple
+                vec3 color = texture2D(colorTexture, vUv).rgb;
 
-                // Enhance colors to make them more vibrant
-                earthColor = pow(earthColor, vec3(0.8)); // Increase brightness
-                earthColor *= 1.3; // Boost intensity
-
-                vec3 color = earthColor;
-
-                // Enhance brightness near mouse cursor
+                // Slightly brighten for mouse hover only
                 float thresh = 0.04;
                 if (vDist < thresh) {
                     float intensity = (thresh - vDist) / thresh;
-                    color = mix(color, vec3(1.0, 1.0, 1.0), intensity * 0.5);
+                    color = mix(color, vec3(1.0), intensity * 0.3);
                 }
 
-                // Add glow effect to dots
-                float dist = length(gl_PointCoord - vec2(0.5));
-                float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
-
-                gl_FragColor = vec4(color, alpha);
+                gl_FragColor = vec4(color, 1.0);
             }
         `;
 
@@ -171,9 +161,7 @@ class Globe {
             uniforms: uniforms,
             vertexShader,
             fragmentShader,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending
+            transparent: false
         });
 
         this.earthPoints = new THREE.Points(pointsGeo, pointsMat);
