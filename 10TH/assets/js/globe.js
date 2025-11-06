@@ -1,6 +1,7 @@
 /**
- * Three.js Globe Component
- * A stylized, interactive 3D globe with particles and animations
+ * Three.js Enhanced Earth Globe
+ * A realistic, interactive 3D Earth with custom shaders, elevation mapping, and starfield
+ * Inspired by vertex-earth with additional stylistic enhancements
  */
 
 class Globe {
@@ -9,18 +10,17 @@ class Globe {
         this.scene = null;
         this.camera = null;
         this.renderer = null;
-        this.globe = null;
-        this.particles = null;
-        this.raycaster = new THREE.Raycaster();
-        this.mouse = new THREE.Vector2();
+        this.globeGroup = null;
+        this.earthPoints = null;
+        this.wireframe = null;
+        this.stars = null;
         this.isDragging = false;
         this.previousMousePosition = { x: 0, y: 0 };
         this.rotationVelocity = { x: 0, y: 0 };
+        this.textureLoader = new THREE.TextureLoader();
 
         this.init();
-        this.createGlobe();
-        this.createParticles();
-        this.createLights();
+        this.loadTexturesAndCreateGlobe();
         this.addEventListeners();
         this.animate();
     }
@@ -28,12 +28,11 @@ class Globe {
     init() {
         // Scene setup
         this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.Fog(0x0A0A0A, 10, 50);
 
         // Camera setup
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
         this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
-        this.camera.position.z = 15;
+        this.camera.position.set(0, 0, 12);
 
         // Renderer setup
         this.renderer = new THREE.WebGLRenderer({
@@ -43,163 +42,184 @@ class Globe {
         });
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.setClearColor(0x0A0A0A, 0);
+        this.renderer.setClearColor(0x0A0A0A, 0.5);
+
+        // Create globe group
+        this.globeGroup = new THREE.Group();
+        this.scene.add(this.globeGroup);
     }
 
-    createGlobe() {
-        const globeGroup = new THREE.Group();
+    loadTexturesAndCreateGlobe() {
+        // Load Earth textures
+        const colorMap = this.textureLoader.load('./assets/textures/04_rainbow1k.jpg');
+        const elevMap = this.textureLoader.load('./assets/textures/01_earthbump1k.jpg');
+        const alphaMap = this.textureLoader.load('./assets/textures/02_earthspec1k.jpg');
 
-        // Main globe sphere
-        const geometry = new THREE.SphereGeometry(5, 64, 64);
+        // Create wireframe backdrop
+        this.createWireframe();
 
-        // Custom shader material for the globe
-        const material = new THREE.MeshPhongMaterial({
-            color: 0x1A1A1A,
-            emissive: 0xFF6B35,
-            emissiveIntensity: 0.1,
-            shininess: 100,
-            transparent: true,
-            opacity: 0.8,
-            wireframe: false
-        });
+        // Create Earth with custom shaders
+        this.createShaderEarth(colorMap, elevMap, alphaMap);
 
-        this.globe = new THREE.Mesh(geometry, material);
-        globeGroup.add(this.globe);
+        // Create starfield
+        this.createStarfield();
 
-        // Wireframe overlay
-        const wireframeGeometry = new THREE.SphereGeometry(5.05, 32, 32);
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
-            color: 0xFF6B35,
+        // Create lights
+        this.createLights();
+    }
+
+    createWireframe() {
+        const geo = new THREE.IcosahedronGeometry(4, 10);
+        const mat = new THREE.MeshBasicMaterial({
+            color: 0x303030,
             wireframe: true,
             transparent: true,
-            opacity: 0.3
+            opacity: 0.15
         });
-        const wireframe = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
-        globeGroup.add(wireframe);
-
-        // Add glowing rings
-        this.createRings(globeGroup);
-
-        this.scene.add(globeGroup);
-        this.globeGroup = globeGroup;
+        this.wireframe = new THREE.Mesh(geo, mat);
+        this.globeGroup.add(this.wireframe);
     }
 
-    createRings(parent) {
-        const ringGeometry = new THREE.TorusGeometry(6, 0.02, 16, 100);
+    createShaderEarth(colorMap, elevMap, alphaMap) {
+        const detail = 80;
+        const pointsGeo = new THREE.IcosahedronGeometry(4, detail);
 
-        // Ring 1
-        const ring1Material = new THREE.MeshBasicMaterial({
-            color: 0x00D9FF,
+        // Custom vertex shader for elevation and visibility
+        const vertexShader = `
+            uniform float size;
+            uniform sampler2D elevTexture;
+
+            varying vec2 vUv;
+            varying float vVisible;
+
+            void main() {
+                vUv = uv;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                float elv = texture2D(elevTexture, vUv).r;
+                vec3 vNormal = normalMatrix * normal;
+
+                // Only show front-facing vertices
+                vVisible = step(0.0, dot(-normalize(mvPosition.xyz), normalize(vNormal)));
+
+                // Apply elevation
+                mvPosition.z += 0.35 * elv;
+
+                gl_PointSize = size;
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `;
+
+        // Custom fragment shader for coloring and transparency
+        const fragmentShader = `
+            uniform sampler2D colorTexture;
+            uniform sampler2D alphaTexture;
+
+            varying vec2 vUv;
+            varying float vVisible;
+
+            void main() {
+                // Discard back-facing points
+                if (floor(vVisible + 0.1) == 0.0) discard;
+
+                float alpha = 1.0 - texture2D(alphaTexture, vUv).r;
+                vec3 color = texture2D(colorTexture, vUv).rgb;
+
+                // Add glow effect
+                float dist = length(gl_PointCoord - vec2(0.5));
+                float glow = 1.0 - smoothstep(0.0, 0.5, dist);
+
+                gl_FragColor = vec4(color, alpha * glow);
+            }
+        `;
+
+        const uniforms = {
+            size: { type: 'f', value: 3.5 },
+            colorTexture: { type: 't', value: colorMap },
+            elevTexture: { type: 't', value: elevMap },
+            alphaTexture: { type: 't', value: alphaMap }
+        };
+
+        const pointsMat = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader,
+            fragmentShader,
             transparent: true,
-            opacity: 0.6
-        });
-        const ring1 = new THREE.Mesh(ringGeometry, ring1Material);
-        ring1.rotation.x = Math.PI / 2;
-        parent.add(ring1);
-
-        // Ring 2
-        const ring2Material = new THREE.MeshBasicMaterial({
-            color: 0xF72585,
-            transparent: true,
-            opacity: 0.4
-        });
-        const ring2 = new THREE.Mesh(ringGeometry, ring2Material);
-        ring2.rotation.x = Math.PI / 3;
-        ring2.rotation.y = Math.PI / 4;
-        parent.add(ring2);
-
-        this.rings = [ring1, ring2];
-    }
-
-    createParticles() {
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 1000;
-        const positions = new Float32Array(particlesCount * 3);
-        const colors = new Float32Array(particlesCount * 3);
-
-        const color1 = new THREE.Color(0xFF6B35);
-        const color2 = new THREE.Color(0x00D9FF);
-        const color3 = new THREE.Color(0xF72585);
-
-        for (let i = 0; i < particlesCount; i++) {
-            const i3 = i * 3;
-
-            // Random position in sphere
-            const radius = 8 + Math.random() * 5;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(Math.random() * 2 - 1);
-
-            positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
-            positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-            positions[i3 + 2] = radius * Math.cos(phi);
-
-            // Random color
-            const colorChoice = Math.random();
-            const chosenColor = colorChoice < 0.33 ? color1 : colorChoice < 0.66 ? color2 : color3;
-
-            colors[i3] = chosenColor.r;
-            colors[i3 + 1] = chosenColor.g;
-            colors[i3 + 2] = chosenColor.b;
-        }
-
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.05,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.8,
+            depthWrite: false,
             blending: THREE.AdditiveBlending
         });
 
-        this.particles = new THREE.Points(particlesGeometry, particlesMaterial);
-        this.scene.add(this.particles);
+        this.earthPoints = new THREE.Points(pointsGeo, pointsMat);
+        this.globeGroup.add(this.earthPoints);
+    }
+
+    createStarfield() {
+        const numStars = 3000;
+        const verts = [];
+        const colors = [];
+
+        for (let i = 0; i < numStars; i++) {
+            // Random sphere point
+            const radius = Math.random() * 25 + 25;
+            const u = Math.random();
+            const v = Math.random();
+            const theta = 2 * Math.PI * u;
+            const phi = Math.acos(2 * v - 1);
+
+            const x = radius * Math.sin(phi) * Math.cos(theta);
+            const y = radius * Math.sin(phi) * Math.sin(theta);
+            const z = radius * Math.cos(phi);
+
+            verts.push(x, y, z);
+
+            // Subtle color variation
+            const col = new THREE.Color();
+            col.setHSL(0.6, 0.2, Math.random() * 0.5 + 0.5);
+            colors.push(col.r, col.g, col.b);
+        }
+
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+        const mat = new THREE.PointsMaterial({
+            size: 0.15,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        this.stars = new THREE.Points(geo, mat);
+        this.scene.add(this.stars);
     }
 
     createLights() {
-        // Ambient light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        this.scene.add(ambientLight);
+        // Hemisphere light for ambient
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x080820, 2);
+        this.scene.add(hemiLight);
 
-        // Key light
-        const keyLight = new THREE.DirectionalLight(0xFF6B35, 1);
-        keyLight.position.set(5, 5, 5);
+        // Accent lights for drama
+        const keyLight = new THREE.DirectionalLight(0xFF6B35, 0.8);
+        keyLight.position.set(5, 3, 5);
         this.scene.add(keyLight);
 
-        // Fill light
-        const fillLight = new THREE.DirectionalLight(0x00D9FF, 0.5);
-        fillLight.position.set(-5, 0, -5);
+        const fillLight = new THREE.DirectionalLight(0x00D9FF, 0.4);
+        fillLight.position.set(-5, 0, -3);
         this.scene.add(fillLight);
-
-        // Rim light
-        const rimLight = new THREE.DirectionalLight(0xF72585, 0.8);
-        rimLight.position.set(0, -5, -5);
-        this.scene.add(rimLight);
-
-        // Point lights for extra glow
-        const pointLight1 = new THREE.PointLight(0xFF6B35, 1, 20);
-        pointLight1.position.set(8, 0, 0);
-        this.scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0x00D9FF, 1, 20);
-        pointLight2.position.set(-8, 0, 0);
-        this.scene.add(pointLight2);
     }
 
     addEventListeners() {
-        // Mouse events for interaction
+        // Mouse events
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('mouseleave', this.onMouseUp.bind(this));
 
-        // Touch events for mobile
+        // Touch events
         this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this));
         this.canvas.addEventListener('touchmove', this.onTouchMove.bind(this));
         this.canvas.addEventListener('touchend', this.onTouchEnd.bind(this));
 
-        // Handle window resize
+        // Window resize
         window.addEventListener('resize', this.onWindowResize.bind(this));
     }
 
@@ -232,6 +252,7 @@ class Globe {
 
     onTouchStart(event) {
         if (event.touches.length === 1) {
+            event.preventDefault();
             this.isDragging = true;
             this.previousMousePosition = {
                 x: event.touches[0].clientX,
@@ -243,6 +264,7 @@ class Globe {
     onTouchMove(event) {
         if (!this.isDragging || event.touches.length !== 1) return;
 
+        event.preventDefault();
         const deltaX = event.touches[0].clientX - this.previousMousePosition.x;
         const deltaY = event.touches[0].clientY - this.previousMousePosition.y;
 
@@ -271,7 +293,7 @@ class Globe {
 
         // Auto-rotate when not dragging
         if (!this.isDragging) {
-            this.globeGroup.rotation.y += 0.002;
+            this.globeGroup.rotation.y += 0.001;
             this.rotationVelocity.x *= 0.95;
             this.rotationVelocity.y *= 0.95;
         }
@@ -280,20 +302,16 @@ class Globe {
         this.globeGroup.rotation.x += this.rotationVelocity.x;
         this.globeGroup.rotation.y += this.rotationVelocity.y;
 
-        // Rotate particles slowly
-        this.particles.rotation.y += 0.0005;
-        this.particles.rotation.x += 0.0002;
-
-        // Animate rings
-        if (this.rings) {
-            this.rings[0].rotation.z += 0.001;
-            this.rings[1].rotation.z -= 0.002;
+        // Subtle star rotation
+        if (this.stars) {
+            this.stars.rotation.y += 0.0002;
+            this.stars.rotation.x += 0.0001;
         }
 
-        // Pulse effect on globe
-        const time = Date.now() * 0.001;
-        const pulse = Math.sin(time) * 0.05 + 1;
-        this.globe.material.emissiveIntensity = pulse * 0.1;
+        // Wireframe counter-rotation for effect
+        if (this.wireframe) {
+            this.wireframe.rotation.y -= 0.0003;
+        }
 
         this.renderer.render(this.scene, this.camera);
     }

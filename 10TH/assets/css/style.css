@@ -180,17 +180,19 @@ h1, h2, h3, h4 {
 }
 
 .hero-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
     max-width: 1400px;
     width: 100%;
     margin: 0 auto;
+    padding-right: 50%; /* Make space for fixed globe */
 }
 
 .hero-text {
     z-index: 10;
+    position: relative;
 }
 
 .hero-title {
@@ -246,20 +248,28 @@ h1, h2, h3, h4 {
     box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
 }
 
-/* Globe Container */
+/* Globe Container - Fixed as underlay */
 .globe-container {
-    position: relative;
-    width: 100%;
-    height: 600px;
+    position: fixed;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    width: 50vw;
+    max-width: 700px;
+    height: 70vh;
+    max-height: 700px;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1;
+    pointer-events: none; /* Allow clicking through to content below */
 }
 
 #globe-canvas {
     width: 100%;
     height: 100%;
     cursor: grab;
+    pointer-events: auto; /* Re-enable interaction on canvas */
 }
 
 #globe-canvas:active {
@@ -298,6 +308,8 @@ h1, h2, h3, h4 {
 .about {
     padding: var(--spacing-xl) var(--spacing-md);
     background: var(--color-bg-light);
+    position: relative;
+    z-index: 10;
 }
 
 .section-header {
@@ -381,6 +393,8 @@ h1, h2, h3, h4 {
 .projects {
     padding: var(--spacing-xl) var(--spacing-md);
     background: var(--color-bg-dark);
+    position: relative;
+    z-index: 10;
 }
 
 .projects-grid {
@@ -487,6 +501,8 @@ h1, h2, h3, h4 {
 .contact {
     padding: var(--spacing-xl) var(--spacing-md);
     background: var(--color-bg-light);
+    position: relative;
+    z-index: 10;
 }
 
 .contact-content {
@@ -637,7 +653,15 @@ h1, h2, h3, h4 {
 /* Responsive Design */
 @media (max-width: 1024px) {
     .hero-content {
-        grid-template-columns: 1fr;
+        padding-right: 0;
+    }
+
+    .globe-container {
+        top: 20%;
+        right: -10%;
+        width: 60vw;
+        height: 60vh;
+        opacity: 0.5;
     }
 
     .contact-content {
@@ -666,8 +690,19 @@ h1, h2, h3, h4 {
         font-size: 2.5rem;
     }
 
+    .hero-content {
+        padding-right: 0;
+    }
+
     .globe-container {
-        height: 400px;
+        position: absolute;
+        top: 50%;
+        right: -20%;
+        transform: translateY(-50%);
+        width: 100vw;
+        height: 50vh;
+        opacity: 0.3;
+        z-index: 0;
     }
 }
 
