@@ -1,9 +1,11 @@
 /**
- * Three.js Globe with GeoJSON - Simplified version
- * Displays continents as colored lines using GeoJSON data
+ * Three.js Globe with Vertex Shader Points
+ * Based on https://github.com/bobbyroe/vertex-earth
+ * Uses custom shaders to render Earth as elevated colored points
  */
 
 import * as THREE from 'three';
+import getStarfield from './getStarfield.js';
 
 class Globe {
     constructor(canvasId) {
@@ -12,6 +14,7 @@ class Globe {
         this.camera = null;
         this.renderer = null;
         this.globeGroup = null;
+        this.stars = null;
         this.isDragging = false;
         this.previousMousePosition = { x: 0, y: 0 };
         this.rotationVelocity = { x: 0, y: 0 };
@@ -30,8 +33,8 @@ class Globe {
 
         // Camera setup
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-        this.camera = new THREE.PerspectiveCamera(75, aspect, 1, 100);
-        this.camera.position.z = 5;
+        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+        this.camera.position.set(0, 0, 3.5);
 
         // Renderer setup
         this.renderer = new THREE.WebGLRenderer({
@@ -46,136 +49,94 @@ class Globe {
         // Create globe group
         this.globeGroup = new THREE.Group();
         this.scene.add(this.globeGroup);
+
+        // Add hemisphere light
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x080820, 3);
+        this.scene.add(hemiLight);
     }
 
     createGlobe() {
-        const radius = 2;
+        const radius = 1;
 
-        // Create sphere edges/wireframe
-        const geometry = new THREE.SphereGeometry(radius, 32, 32);
-        const lineMat = new THREE.LineBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.15,
+        // Load textures
+        const textureLoader = new THREE.TextureLoader();
+        const colorMap = textureLoader.load('./assets/textures/04_rainbow1k.jpg');
+        const elevMap = textureLoader.load('./assets/textures/01_earthbump1k.jpg');
+        const alphaMap = textureLoader.load('./assets/textures/02_earthspec1k.jpg');
+
+        // Wireframe sphere base
+        const wireGeo = new THREE.IcosahedronGeometry(radius, 10);
+        const wireMat = new THREE.MeshBasicMaterial({
+            color: 0x202020,
+            wireframe: true,
         });
-        const edges = new THREE.EdgesGeometry(geometry, 10);
-        const line = new THREE.LineSegments(edges, lineMat);
-        this.globeGroup.add(line);
+        const wireframe = new THREE.Mesh(wireGeo, wireMat);
+        this.globeGroup.add(wireframe);
 
-        // Load and draw continents from GeoJSON
-        fetch('./assets/ne_110m_land.json')
-            .then(response => response.json())
-            .then(data => {
-                this.drawGeoJSON(data, radius);
-            })
-            .catch(error => {
-                console.error('Error loading GeoJSON:', error);
-            });
-    }
+        // High-detail points geometry
+        const detail = 120;
+        const pointsGeo = new THREE.IcosahedronGeometry(radius, detail);
 
-    drawGeoJSON(json, radius) {
-        const features = json.features || [];
+        // Vertex shader - elevates points based on elevation map
+        const vertexShader = `
+            uniform float size;
+            uniform sampler2D elevTexture;
 
-        features.forEach(feature => {
-            if (feature.geometry.type === 'Polygon') {
-                this.drawPolygon(feature.geometry.coordinates, radius);
-            } else if (feature.geometry.type === 'MultiPolygon') {
-                feature.geometry.coordinates.forEach(polygon => {
-                    this.drawPolygon(polygon, radius);
-                });
+            varying vec2 vUv;
+            varying float vVisible;
+
+            void main() {
+                vUv = uv;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                float elv = texture2D(elevTexture, vUv).r;
+                vec3 vNormal = normalMatrix * normal;
+                vVisible = step(0.0, dot(-normalize(mvPosition.xyz), normalize(vNormal)));
+                mvPosition.z += 0.35 * elv;
+                gl_PointSize = size;
+                gl_Position = projectionMatrix * mvPosition;
             }
-        });
-    }
+        `;
 
-    drawPolygon(coordinates, radius) {
-        coordinates.forEach(ring => {
-            const points = [];
+        // Fragment shader - colors points and handles transparency
+        const fragmentShader = `
+            uniform sampler2D colorTexture;
+            uniform sampler2D alphaTexture;
 
-            ring.forEach(coord => {
-                const lon = coord[0];
-                const lat = coord[1];
+            varying vec2 vUv;
+            varying float vVisible;
 
-                // Convert lat/lon to 3D coordinates
-                const phi = (90 - lat) * (Math.PI / 180);
-                const theta = (lon + 180) * (Math.PI / 180);
-
-                const x = -radius * Math.sin(phi) * Math.cos(theta);
-                const y = radius * Math.cos(phi);
-                const z = radius * Math.sin(phi) * Math.sin(theta);
-
-                points.push(new THREE.Vector3(x, y, z));
-            });
-
-            // Create line from points
-            const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-            // Random color for each landmass (greens, cyans, yellows)
-            let hue = 0.3 + Math.random() * 0.2;
-            if (Math.random() > 0.5) {
-                hue -= 0.3;
+            void main() {
+                if (floor(vVisible + 0.1) == 0.0) discard;
+                float alpha = 1.0 - texture2D(alphaTexture, vUv).r;
+                vec3 color = texture2D(colorTexture, vUv).rgb;
+                gl_FragColor = vec4(color, alpha);
             }
-            const color = new THREE.Color().setHSL(hue, 0.8, 0.5);
+        `;
 
-            const material = new THREE.LineBasicMaterial({
-                color: color,
-                linewidth: 2
-            });
+        // Shader uniforms
+        const uniforms = {
+            size: { type: "f", value: 4.0 },
+            colorTexture: { type: "t", value: colorMap },
+            elevTexture: { type: "t", value: elevMap },
+            alphaTexture: { type: "t", value: alphaMap }
+        };
 
-            const lineObj = new THREE.Line(geometry, material);
-            this.globeGroup.add(lineObj);
+        const pointsMat = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader,
+            fragmentShader,
+            transparent: true
         });
+
+        const points = new THREE.Points(pointsGeo, pointsMat);
+        this.globeGroup.add(points);
     }
 
     createStarfield() {
-        const numStars = 8000;
-        const verts = [];
-        const colors = [];
+        const textureLoader = new THREE.TextureLoader();
+        const starSprite = textureLoader.load('./assets/textures/circle.png');
 
-        for (let i = 0; i < numStars; i++) {
-            // Random position in large sphere to fill viewport
-            const radius = Math.random() * 80 + 20;
-            const u = Math.random();
-            const v = Math.random();
-            const theta = 2 * Math.PI * u;
-            const phi = Math.acos(2 * v - 1);
-
-            const x = radius * Math.sin(phi) * Math.cos(theta);
-            const y = radius * Math.sin(phi) * Math.sin(theta);
-            const z = radius * Math.cos(phi);
-
-            verts.push(x, y, z);
-
-            // Varied color - whites, blues, and subtle tints
-            const colorChoice = Math.random();
-            const col = new THREE.Color();
-
-            if (colorChoice < 0.7) {
-                // Most stars are white/blue-white
-                col.setHSL(0.6, Math.random() * 0.1, 0.8 + Math.random() * 0.2);
-            } else if (colorChoice < 0.85) {
-                // Some are cyan/blue accent
-                col.setHSL(0.55, 0.3, 0.7 + Math.random() * 0.3);
-            } else {
-                // Few are orange accent
-                col.setHSL(0.08, 0.4, 0.7 + Math.random() * 0.3);
-            }
-
-            colors.push(col.r, col.g, col.b);
-        }
-
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
-        const mat = new THREE.PointsMaterial({
-            size: 0.2,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.9,
-            sizeAttenuation: true
-        });
-
-        this.stars = new THREE.Points(geo, mat);
+        this.stars = getStarfield({ numStars: 4500, sprite: starSprite });
         this.scene.add(this.stars);
     }
 
@@ -280,7 +241,7 @@ class Globe {
             this.rotationVelocity.y *= 0.95;
 
             // Add gentle continuous rotation
-            this.globeGroup.rotation.y += 0.001;
+            this.globeGroup.rotation.y += 0.002;
         } else {
             // Apply rotation velocity from dragging
             this.globeGroup.rotation.x += this.rotationVelocity.x;
