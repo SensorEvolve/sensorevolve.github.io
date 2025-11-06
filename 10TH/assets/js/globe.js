@@ -69,7 +69,7 @@ class Globe {
     }
 
     createWireframe() {
-        const geo = new THREE.IcosahedronGeometry(4, 10);
+        const geo = new THREE.IcosahedronGeometry(8, 10);
         const mat = new THREE.MeshBasicMaterial({
             color: 0x303030,
             wireframe: true,
@@ -82,7 +82,7 @@ class Globe {
 
     createShaderEarth(colorMap, elevMap, alphaMap) {
         const detail = 80;
-        const pointsGeo = new THREE.IcosahedronGeometry(4, detail);
+        const pointsGeo = new THREE.IcosahedronGeometry(8, detail);
 
         // Custom vertex shader for elevation and visibility
         const vertexShader = `
@@ -133,7 +133,7 @@ class Globe {
         `;
 
         const uniforms = {
-            size: { type: 'f', value: 3.5 },
+            size: { type: 'f', value: 7.0 },
             colorTexture: { type: 't', value: colorMap },
             elevTexture: { type: 't', value: elevMap },
             alphaTexture: { type: 't', value: alphaMap }
