@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>10TH - Portfolio Showcase</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170/build/three.module.js",
+            "jsm/": "https://cdn.jsdelivr.net/npm/three@0.170/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -311,10 +319,9 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="assets/js/globe.js"></script>
+    <script type="module" src="assets/js/globe.js"></script>
     <script src="assets/js/animations.js"></script>
     <script src="assets/js/main.js"></script>
 </body>

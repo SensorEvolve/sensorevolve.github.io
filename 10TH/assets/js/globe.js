@@ -1,8 +1,10 @@
 /**
- * Three.js Enhanced Earth Globe
- * Based on vertex-earth interactive branch by bobbyroe
- * https://github.com/bobbyroe/vertex-earth/tree/interactive
+ * Three.js Globe with GeoJSON
+ * Based on https://github.com/bobbyroe/3d-globe-with-threejs
+ * Displays continents as colored lines using GeoJSON data
  */
+
+import { drawThreeGeo } from './threeGeoJSON.js';
 
 class Globe {
     constructor(canvasId) {
@@ -11,20 +13,13 @@ class Globe {
         this.camera = null;
         this.renderer = null;
         this.globeGroup = null;
-        this.globe = null;
-        this.earthPoints = null;
-        this.wireframe = null;
-        this.stars = null;
-        this.raycaster = new THREE.Raycaster();
-        this.pointerPos = new THREE.Vector2();
-        this.globeUV = new THREE.Vector2();
         this.isDragging = false;
         this.previousMousePosition = { x: 0, y: 0 };
         this.rotationVelocity = { x: 0, y: 0 };
-        this.textureLoader = new THREE.TextureLoader();
 
         this.init();
-        this.loadTexturesAndCreateGlobe();
+        this.createGlobe();
+        this.createStarfield();
         this.addEventListeners();
         this.animate();
     }
@@ -33,10 +28,10 @@ class Globe {
         // Scene setup
         this.scene = new THREE.Scene();
 
-        // Camera setup - scale 2x from original (z: 4 → 8)
+        // Camera setup
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
-        this.camera.position.set(0, 0, 8);
+        this.camera = new THREE.PerspectiveCamera(75, aspect, 1, 100);
+        this.camera.position.z = 5;
 
         // Renderer setup
         this.renderer = new THREE.WebGLRenderer({
@@ -53,119 +48,32 @@ class Globe {
         this.scene.add(this.globeGroup);
     }
 
-    loadTexturesAndCreateGlobe() {
-        // Load Earth texture to show landmasses
-        const colorMap = this.textureLoader.load('./assets/textures/00_earthmap1k.jpg');
-
-        // Create wireframe backdrop - scale 2x from original (radius: 1 → 2)
-        this.createWireframe();
-
-        // Create Earth with colored dots showing landmasses
-        this.createColoredDotsEarth(colorMap);
-
-        // Create starfield
-        this.createStarfield();
-
-        // Create lights
-        this.createLights();
-    }
-
-    createWireframe() {
-        // Scale 2x: radius 1 → 2, detail 16
-        const geo = new THREE.IcosahedronGeometry(2, 16);
-        const mat = new THREE.MeshBasicMaterial({
-            color: 0x0099ff,
-            wireframe: true,
+    createGlobe() {
+        // Create sphere edges/wireframe
+        const geometry = new THREE.SphereGeometry(2);
+        const lineMat = new THREE.LineBasicMaterial({
+            color: 0xffffff,
             transparent: true,
-            opacity: 0.1
+            opacity: 0.2,
         });
-        this.wireframe = new THREE.Mesh(geo, mat);
-        this.globeGroup.add(this.wireframe);
+        const edges = new THREE.EdgesGeometry(geometry, 1);
+        const line = new THREE.LineSegments(edges, lineMat);
+        this.globeGroup.add(line);
 
-        // Store globe reference for raycasting
-        this.globe = this.wireframe;
-    }
-
-    createColoredDotsEarth(colorMap) {
-        // Scale 2x: radius 1 → 2, detail 120 (keep high detail!)
-        const detail = 120;
-        const pointsGeo = new THREE.IcosahedronGeometry(2, detail);
-
-        // Custom vertex shader with Earth texture
-        const vertexShader = `
-            uniform float size;
-            uniform vec2 mouseUV;
-
-            varying vec2 vUv;
-            varying float vVisible;
-            varying float vDist;
-
-            void main() {
-                vUv = uv;
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                vec3 vNormal = normalMatrix * normal;
-
-                // Only show front-facing vertices
-                vVisible = step(0.0, dot(-normalize(mvPosition.xyz), normalize(vNormal)));
-
-                // Mouse interaction - bulge effect near cursor
-                float dist = distance(mouseUV, vUv);
-                float zDisp = 0.0;
-                float thresh = 0.04;
-                if (dist < thresh) {
-                    zDisp = (thresh - dist) * 10.0;
-                }
-                vDist = dist;
-                mvPosition.z += zDisp;
-
-                gl_PointSize = size;
-                gl_Position = projectionMatrix * mvPosition;
-            }
-        `;
-
-        // Custom fragment shader using Earth texture for colors
-        const fragmentShader = `
-            uniform sampler2D colorTexture;
-
-            varying vec2 vUv;
-            varying float vVisible;
-            varying float vDist;
-
-            void main() {
-                // Discard back-facing points
-                if (floor(vVisible + 0.1) == 0.0) discard;
-
-                // Get color from Earth texture - keep it simple
-                vec3 color = texture2D(colorTexture, vUv).rgb;
-
-                // Slightly brighten for mouse hover only
-                float thresh = 0.04;
-                if (vDist < thresh) {
-                    float intensity = (thresh - vDist) / thresh;
-                    color = mix(color, vec3(1.0), intensity * 0.3);
-                }
-
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `;
-
-        const uniforms = {
-            size: { type: 'f', value: 8.0 },
-            colorTexture: { type: 't', value: colorMap },
-            mouseUV: { type: 'v2', value: new THREE.Vector2(0.0, 0.0) }
-        };
-
-        this.uniforms = uniforms;
-
-        const pointsMat = new THREE.ShaderMaterial({
-            uniforms: uniforms,
-            vertexShader,
-            fragmentShader,
-            transparent: false
-        });
-
-        this.earthPoints = new THREE.Points(pointsGeo, pointsMat);
-        this.globeGroup.add(this.earthPoints);
+        // Load and draw continents from GeoJSON
+        fetch('./assets/ne_110m_land.json')
+            .then(response => response.text())
+            .then(text => {
+                const data = JSON.parse(text);
+                const countries = drawThreeGeo({
+                    json: data,
+                    radius: 2,
+                    materialOptions: {
+                        color: 0x80FF80,
+                    },
+                });
+                this.globeGroup.add(countries);
+            });
     }
 
     createStarfield() {
@@ -221,22 +129,6 @@ class Globe {
         this.scene.add(this.stars);
     }
 
-    createLights() {
-        // Hemisphere light from vertex-earth
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x080820, 3);
-        this.scene.add(hemiLight);
-    }
-
-    handleRaycast() {
-        // Mouse interaction from vertex-earth interactive
-        this.raycaster.setFromCamera(this.pointerPos, this.camera);
-        const intersects = this.raycaster.intersectObjects([this.globe], false);
-        if (intersects.length > 0) {
-            this.globeUV.copy(intersects[0].uv);
-        }
-        this.uniforms.mouseUV.value = this.globeUV;
-    }
-
     addEventListeners() {
         // Mouse events for drag rotation
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
@@ -262,13 +154,6 @@ class Globe {
     }
 
     onMouseMove(event) {
-        // Update pointer position for raycasting (normalized)
-        this.pointerPos.set(
-            (event.clientX / this.canvas.clientWidth) * 2 - 1,
-            -(event.clientY / this.canvas.clientHeight) * 2 + 1
-        );
-
-        // Handle drag rotation
         if (!this.isDragging) return;
 
         const deltaX = event.clientX - this.previousMousePosition.x;
@@ -344,9 +229,6 @@ class Globe {
             this.stars.rotation.y += 0.0002;
             this.stars.rotation.x += 0.0001;
         }
-
-        // Handle mouse raycasting for interactive effect
-        this.handleRaycast();
 
         this.renderer.render(this.scene, this.camera);
     }
