@@ -31,8 +31,8 @@ class Globe {
 
         // Camera setup
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
-        this.camera.position.set(0, 0, 12);
+        this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+        this.camera.position.set(0, 0, 15);
 
         // Renderer setup
         this.renderer = new THREE.WebGLRenderer({
@@ -42,7 +42,7 @@ class Globe {
         });
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.setClearColor(0x0A0A0A, 0.5);
+        this.renderer.setClearColor(0x0A0A0A, 1);
 
         // Create globe group
         this.globeGroup = new THREE.Group();
@@ -153,13 +153,14 @@ class Globe {
     }
 
     createStarfield() {
-        const numStars = 3000;
+        const numStars = 8000;
         const verts = [];
         const colors = [];
+        const sizes = [];
 
         for (let i = 0; i < numStars; i++) {
-            // Random sphere point
-            const radius = Math.random() * 25 + 25;
+            // Random position in large sphere to fill viewport
+            const radius = Math.random() * 80 + 20;
             const u = Math.random();
             const v = Math.random();
             const theta = 2 * Math.PI * u;
@@ -171,9 +172,21 @@ class Globe {
 
             verts.push(x, y, z);
 
-            // Subtle color variation
+            // Varied color - whites, blues, and subtle tints
+            const colorChoice = Math.random();
             const col = new THREE.Color();
-            col.setHSL(0.6, 0.2, Math.random() * 0.5 + 0.5);
+
+            if (colorChoice < 0.7) {
+                // Most stars are white/blue-white
+                col.setHSL(0.6, Math.random() * 0.1, 0.8 + Math.random() * 0.2);
+            } else if (colorChoice < 0.85) {
+                // Some are cyan/blue accent
+                col.setHSL(0.55, 0.3, 0.7 + Math.random() * 0.3);
+            } else {
+                // Few are orange accent
+                col.setHSL(0.08, 0.4, 0.7 + Math.random() * 0.3);
+            }
+
             colors.push(col.r, col.g, col.b);
         }
 
@@ -182,10 +195,11 @@ class Globe {
         geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
         const mat = new THREE.PointsMaterial({
-            size: 0.15,
+            size: 0.2,
             vertexColors: true,
             transparent: true,
-            opacity: 0.8
+            opacity: 0.9,
+            sizeAttenuation: true
         });
 
         this.stars = new THREE.Points(geo, mat);

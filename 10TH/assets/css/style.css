@@ -187,12 +187,14 @@ h1, h2, h3, h4 {
     max-width: 1400px;
     width: 100%;
     margin: 0 auto;
-    padding-right: 50%; /* Make space for fixed globe */
+    z-index: 10;
+    position: relative;
 }
 
 .hero-text {
     z-index: 10;
     position: relative;
+    max-width: 50%;
 }
 
 .hero-title {
@@ -248,16 +250,13 @@ h1, h2, h3, h4 {
     box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
 }
 
-/* Globe Container - Fixed as underlay */
+/* Globe Container - Full hero background */
 .globe-container {
-    position: fixed;
-    top: 50%;
-    right: 5%;
-    transform: translateY(-50%);
-    width: 50vw;
-    max-width: 700px;
-    height: 70vh;
-    max-height: 700px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -290,6 +289,7 @@ h1, h2, h3, h4 {
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
+    z-index: 10;
 }
 
 .scroll-line {
@@ -652,16 +652,8 @@ h1, h2, h3, h4 {
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-    .hero-content {
-        padding-right: 0;
-    }
-
-    .globe-container {
-        top: 20%;
-        right: -10%;
-        width: 60vw;
-        height: 60vh;
-        opacity: 0.5;
+    .hero-text {
+        max-width: 60%;
     }
 
     .contact-content {
@@ -690,19 +682,12 @@ h1, h2, h3, h4 {
         font-size: 2.5rem;
     }
 
-    .hero-content {
-        padding-right: 0;
+    .hero-text {
+        max-width: 100%;
     }
 
     .globe-container {
-        position: absolute;
-        top: 50%;
-        right: -20%;
-        transform: translateY(-50%);
-        width: 100vw;
-        height: 50vh;
-        opacity: 0.3;
-        z-index: 0;
+        opacity: 0.4;
     }
 }
 

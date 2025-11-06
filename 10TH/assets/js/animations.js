@@ -225,20 +225,9 @@ function initProjectCardAnimations() {
  * Parallax effects for depth
  */
 function initParallaxEffects() {
-    // Globe parallax
-    gsap.to('.globe-container', {
-        scrollTrigger: {
-            trigger: '.hero',
-            start: "top top",
-            end: "bottom top",
-            scrub: 1
-        },
-        y: 200,
-        opacity: 0,
-        ease: "none"
-    });
+    // Globe and starfield stay in hero section - no parallax needed
 
-    // Hero text parallax
+    // Hero text subtle parallax
     gsap.to('.hero-text', {
         scrollTrigger: {
             trigger: '.hero',
@@ -246,8 +235,8 @@ function initParallaxEffects() {
             end: "bottom top",
             scrub: 1
         },
-        y: 150,
-        opacity: 0,
+        y: 100,
+        opacity: 0.3,
         ease: "none"
     });
 
