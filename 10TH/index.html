@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10TH - Portfolio Showcase</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">10TH</div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Globe -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="title-line">SHOWCASING</span>
+                    <span class="title-line">INNOVATION</span>
+                    <span class="title-line">WORLDWIDE</span>
+                </h1>
+                <p class="hero-subtitle">Exploring the intersection of creativity and technology</p>
+                <button class="cta-button">Explore Projects</button>
+            </div>
+            <div class="globe-container">
+                <canvas id="globe-canvas"></canvas>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <span>Scroll</span>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">ABOUT</span>
+                <h2 class="section-title">Building the Future</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="lead-text">
+                        At 10TH, we push boundaries and create exceptional digital experiences
+                        that make an impact across the globe.
+                    </p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Projects Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">30+</div>
+                            <div class="stat-label">Happy Clients</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">15+</div>
+                            <div class="stat-label">Awards Won</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Innovation First</h3>
+                        <p>Cutting-edge technology meets creative design</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💡</div>
+                        <h3>Creative Solutions</h3>
+                        <p>Unique approaches to complex challenges</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Results Driven</h3>
+                        <p>Measurable impact and exceptional outcomes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">PORTFOLIO</span>
+                <h2 class="section-title">Featured Projects</h2>
+            </div>
+            <div class="projects-grid">
+                <!-- Project Card 1 -->
+                <article class="project-card" data-project="1">
+                    <div class="project-image">
+                        <div class="project-placeholder">PROJECT IMAGE</div>
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Web Development</span>
+                        <h3 class="project-title">Project Alpha</h3>
+                        <p class="project-description">
+                            An innovative web application that revolutionizes user experience
+                            with cutting-edge technology.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">WebGL</span>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 2 -->
+                <article class="project-card" data-project="2">
+                    <div class="project-image">
+                        <div class="project-placeholder">PROJECT IMAGE</div>
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Mobile App</span>
+                        <h3 class="project-title">Project Beta</h3>
+                        <p class="project-description">
+                            A mobile-first platform designed to connect people and create
+                            meaningful interactions.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React Native</span>
+                            <span class="tag">Firebase</span>
+                            <span class="tag">UI/UX</span>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 3 -->
+                <article class="project-card" data-project="3">
+                    <div class="project-image">
+                        <div class="project-placeholder">PROJECT IMAGE</div>
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">3D Experience</span>
+                        <h3 class="project-title">Project Gamma</h3>
+                        <p class="project-description">
+                            An immersive 3D experience that blends art and technology in
+                            stunning visual harmony.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">Three.js</span>
+                            <span class="tag">WebGL</span>
+                            <span class="tag">GSAP</span>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 4 -->
+                <article class="project-card" data-project="4">
+                    <div class="project-image">
+                        <div class="project-placeholder">PROJECT IMAGE</div>
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">E-commerce</span>
+                        <h3 class="project-title">Project Delta</h3>
+                        <p class="project-description">
+                            A next-generation e-commerce platform with AI-powered recommendations
+                            and seamless checkout.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">Vue.js</span>
+                            <span class="tag">Stripe</span>
+                            <span class="tag">AI/ML</span>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 5 -->
+                <article class="project-card" data-project="5">
+                    <div class="project-image">
+                        <div class="project-placeholder">PROJECT IMAGE</div>
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Data Visualization</span>
+                        <h3 class="project-title">Project Epsilon</h3>
+                        <p class="project-description">
+                            Interactive data visualization dashboard bringing complex data
+                            to life through elegant design.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">D3.js</span>
+                            <span class="tag">Python</span>
+                            <span class="tag">Analytics</span>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 6 -->
+                <article class="project-card" data-project="6">
+                    <div class="project-image">
+                        <div class="project-placeholder">PROJECT IMAGE</div>
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Blockchain</span>
+                        <h3 class="project-title">Project Zeta</h3>
+                        <p class="project-description">
+                            A decentralized application exploring the future of digital ownership
+                            and secure transactions.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">Solidity</span>
+                            <span class="tag">Web3</span>
+                            <span class="tag">NFT</span>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-text">
+                    <span class="section-label">GET IN TOUCH</span>
+                    <h2 class="section-title">Let's Create Something Amazing</h2>
+                    <p class="lead-text">
+                        Ready to bring your vision to life? Let's collaborate and build
+                        something extraordinary together.
+                    </p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <strong>Email</strong>
+                            <a href="mailto:hello@10th.com">hello@10th.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <strong>Social</strong>
+                            <div class="social-links">
+                                <a href="#" class="social-link">Twitter</a>
+                                <a href="#" class="social-link">LinkedIn</a>
+                                <a href="#" class="social-link">GitHub</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="cta-button">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">10TH</div>
+                    <p>Showcasing innovation worldwide</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Navigate</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#projects">Projects</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Connect</h4>
+                        <ul>
+                            <li><a href="#">Twitter</a></li>
+                            <li><a href="#">LinkedIn</a></li>
+                            <li><a href="#">GitHub</a></li>
+                            <li><a href="#">Dribbble</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 10TH. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="assets/js/globe.js"></script>
+    <script src="assets/js/animations.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
