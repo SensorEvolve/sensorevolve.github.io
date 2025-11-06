@@ -1,10 +1,9 @@
 /**
- * Three.js Globe with GeoJSON
- * Based on https://github.com/bobbyroe/3d-globe-with-threejs
+ * Three.js Globe with GeoJSON - Simplified version
  * Displays continents as colored lines using GeoJSON data
  */
 
-import { drawThreeGeo } from './threeGeoJSON.js';
+import * as THREE from 'three';
 
 class Globe {
     constructor(canvasId) {
@@ -49,31 +48,81 @@ class Globe {
     }
 
     createGlobe() {
+        const radius = 2;
+
         // Create sphere edges/wireframe
-        const geometry = new THREE.SphereGeometry(2);
+        const geometry = new THREE.SphereGeometry(radius, 32, 32);
         const lineMat = new THREE.LineBasicMaterial({
             color: 0xffffff,
             transparent: true,
-            opacity: 0.2,
+            opacity: 0.15,
         });
-        const edges = new THREE.EdgesGeometry(geometry, 1);
+        const edges = new THREE.EdgesGeometry(geometry, 10);
         const line = new THREE.LineSegments(edges, lineMat);
         this.globeGroup.add(line);
 
         // Load and draw continents from GeoJSON
         fetch('./assets/ne_110m_land.json')
-            .then(response => response.text())
-            .then(text => {
-                const data = JSON.parse(text);
-                const countries = drawThreeGeo({
-                    json: data,
-                    radius: 2,
-                    materialOptions: {
-                        color: 0x80FF80,
-                    },
-                });
-                this.globeGroup.add(countries);
+            .then(response => response.json())
+            .then(data => {
+                this.drawGeoJSON(data, radius);
+            })
+            .catch(error => {
+                console.error('Error loading GeoJSON:', error);
             });
+    }
+
+    drawGeoJSON(json, radius) {
+        const features = json.features || [];
+
+        features.forEach(feature => {
+            if (feature.geometry.type === 'Polygon') {
+                this.drawPolygon(feature.geometry.coordinates, radius);
+            } else if (feature.geometry.type === 'MultiPolygon') {
+                feature.geometry.coordinates.forEach(polygon => {
+                    this.drawPolygon(polygon, radius);
+                });
+            }
+        });
+    }
+
+    drawPolygon(coordinates, radius) {
+        coordinates.forEach(ring => {
+            const points = [];
+
+            ring.forEach(coord => {
+                const lon = coord[0];
+                const lat = coord[1];
+
+                // Convert lat/lon to 3D coordinates
+                const phi = (90 - lat) * (Math.PI / 180);
+                const theta = (lon + 180) * (Math.PI / 180);
+
+                const x = -radius * Math.sin(phi) * Math.cos(theta);
+                const y = radius * Math.cos(phi);
+                const z = radius * Math.sin(phi) * Math.sin(theta);
+
+                points.push(new THREE.Vector3(x, y, z));
+            });
+
+            // Create line from points
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+            // Random color for each landmass (greens, cyans, yellows)
+            let hue = 0.3 + Math.random() * 0.2;
+            if (Math.random() > 0.5) {
+                hue -= 0.3;
+            }
+            const color = new THREE.Color().setHSL(hue, 0.8, 0.5);
+
+            const material = new THREE.LineBasicMaterial({
+                color: color,
+                linewidth: 2
+            });
+
+            const lineObj = new THREE.Line(geometry, material);
+            this.globeGroup.add(lineObj);
+        });
     }
 
     createStarfield() {
