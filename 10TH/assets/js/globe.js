@@ -1,7 +1,7 @@
 /**
  * Three.js Enhanced Earth Globe
- * A realistic, interactive 3D Earth with custom shaders, elevation mapping, and starfield
- * Inspired by vertex-earth with additional stylistic enhancements
+ * Based on vertex-earth interactive branch by bobbyroe
+ * https://github.com/bobbyroe/vertex-earth/tree/interactive
  */
 
 class Globe {
@@ -11,9 +11,13 @@ class Globe {
         this.camera = null;
         this.renderer = null;
         this.globeGroup = null;
+        this.globe = null;
         this.earthPoints = null;
         this.wireframe = null;
         this.stars = null;
+        this.raycaster = new THREE.Raycaster();
+        this.pointerPos = new THREE.Vector2();
+        this.globeUV = new THREE.Vector2();
         this.isDragging = false;
         this.previousMousePosition = { x: 0, y: 0 };
         this.rotationVelocity = { x: 0, y: 0 };
@@ -29,10 +33,10 @@ class Globe {
         // Scene setup
         this.scene = new THREE.Scene();
 
-        // Camera setup
+        // Camera setup - scale 2x from original (z: 4 → 8)
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-        this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
-        this.camera.position.set(0, 0, 15);
+        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+        this.camera.position.set(0, 0, 8);
 
         // Renderer setup
         this.renderer = new THREE.WebGLRenderer({
@@ -50,16 +54,17 @@ class Globe {
     }
 
     loadTexturesAndCreateGlobe() {
-        // Load Earth textures
-        const colorMap = this.textureLoader.load('./assets/textures/04_rainbow1k.jpg');
+        // Load Earth textures - using proper Earth map, not rainbow
+        const colorMap = this.textureLoader.load('./assets/textures/00_earthmap1k.jpg');
+        const otherMap = this.textureLoader.load('./assets/textures/04_rainbow1k.jpg');
         const elevMap = this.textureLoader.load('./assets/textures/01_earthbump1k.jpg');
         const alphaMap = this.textureLoader.load('./assets/textures/02_earthspec1k.jpg');
 
-        // Create wireframe backdrop
+        // Create wireframe backdrop - scale 2x from original (radius: 1 → 2)
         this.createWireframe();
 
-        // Create Earth with custom shaders
-        this.createShaderEarth(colorMap, elevMap, alphaMap);
+        // Create Earth with custom shaders - scale 2x
+        this.createShaderEarth(colorMap, otherMap, elevMap, alphaMap);
 
         // Create starfield
         this.createStarfield();
@@ -69,28 +74,35 @@ class Globe {
     }
 
     createWireframe() {
-        const geo = new THREE.IcosahedronGeometry(8, 10);
+        // Scale 2x: radius 1 → 2, detail 16
+        const geo = new THREE.IcosahedronGeometry(2, 16);
         const mat = new THREE.MeshBasicMaterial({
-            color: 0x303030,
+            color: 0x0099ff,
             wireframe: true,
             transparent: true,
-            opacity: 0.15
+            opacity: 0.1
         });
         this.wireframe = new THREE.Mesh(geo, mat);
         this.globeGroup.add(this.wireframe);
+
+        // Store globe reference for raycasting
+        this.globe = this.wireframe;
     }
 
-    createShaderEarth(colorMap, elevMap, alphaMap) {
-        const detail = 80;
-        const pointsGeo = new THREE.IcosahedronGeometry(8, detail);
+    createShaderEarth(colorMap, otherMap, elevMap, alphaMap) {
+        // Scale 2x: radius 1 → 2, detail 120 (keep high detail!)
+        const detail = 120;
+        const pointsGeo = new THREE.IcosahedronGeometry(2, detail);
 
-        // Custom vertex shader for elevation and visibility
+        // Custom vertex shader with mouse interaction from vertex-earth
         const vertexShader = `
             uniform float size;
             uniform sampler2D elevTexture;
+            uniform vec2 mouseUV;
 
             varying vec2 vUv;
             varying float vVisible;
+            varying float vDist;
 
             void main() {
                 vUv = uv;
@@ -104,18 +116,30 @@ class Globe {
                 // Apply elevation
                 mvPosition.z += 0.35 * elv;
 
+                // Mouse interaction - bulge effect near cursor
+                float dist = distance(mouseUV, vUv);
+                float zDisp = 0.0;
+                float thresh = 0.04;
+                if (dist < thresh) {
+                    zDisp = (thresh - dist) * 10.0;
+                }
+                vDist = dist;
+                mvPosition.z += zDisp;
+
                 gl_PointSize = size;
                 gl_Position = projectionMatrix * mvPosition;
             }
         `;
 
-        // Custom fragment shader for coloring and transparency
+        // Custom fragment shader with color mixing from vertex-earth
         const fragmentShader = `
             uniform sampler2D colorTexture;
             uniform sampler2D alphaTexture;
+            uniform sampler2D otherTexture;
 
             varying vec2 vUv;
             varying float vVisible;
+            varying float vDist;
 
             void main() {
                 // Discard back-facing points
@@ -123,29 +147,35 @@ class Globe {
 
                 float alpha = 1.0 - texture2D(alphaTexture, vUv).r;
                 vec3 color = texture2D(colorTexture, vUv).rgb;
+                vec3 other = texture2D(otherTexture, vUv).rgb;
 
-                // Add glow effect
-                float dist = length(gl_PointCoord - vec2(0.5));
-                float glow = 1.0 - smoothstep(0.0, 0.5, dist);
+                // Mix in colorful texture near mouse cursor
+                float thresh = 0.04;
+                if (vDist < thresh) {
+                    color = mix(color, other, (thresh - vDist) * 50.0);
+                }
 
-                gl_FragColor = vec4(color, alpha * glow);
+                gl_FragColor = vec4(color, alpha);
             }
         `;
 
+        // Scale 2x: size 4.0 → 8.0
         const uniforms = {
-            size: { type: 'f', value: 7.0 },
+            size: { type: 'f', value: 8.0 },
             colorTexture: { type: 't', value: colorMap },
+            otherTexture: { type: 't', value: otherMap },
             elevTexture: { type: 't', value: elevMap },
-            alphaTexture: { type: 't', value: alphaMap }
+            alphaTexture: { type: 't', value: alphaMap },
+            mouseUV: { type: 'v2', value: new THREE.Vector2(0.0, 0.0) }
         };
+
+        this.uniforms = uniforms;
 
         const pointsMat = new THREE.ShaderMaterial({
             uniforms: uniforms,
             vertexShader,
             fragmentShader,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending
+            transparent: true
         });
 
         this.earthPoints = new THREE.Points(pointsGeo, pointsMat);
@@ -156,7 +186,6 @@ class Globe {
         const numStars = 8000;
         const verts = [];
         const colors = [];
-        const sizes = [];
 
         for (let i = 0; i < numStars; i++) {
             // Random position in large sphere to fill viewport
@@ -207,22 +236,23 @@ class Globe {
     }
 
     createLights() {
-        // Hemisphere light for ambient
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x080820, 2);
+        // Hemisphere light from vertex-earth
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x080820, 3);
         this.scene.add(hemiLight);
+    }
 
-        // Accent lights for drama
-        const keyLight = new THREE.DirectionalLight(0xFF6B35, 0.8);
-        keyLight.position.set(5, 3, 5);
-        this.scene.add(keyLight);
-
-        const fillLight = new THREE.DirectionalLight(0x00D9FF, 0.4);
-        fillLight.position.set(-5, 0, -3);
-        this.scene.add(fillLight);
+    handleRaycast() {
+        // Mouse interaction from vertex-earth interactive
+        this.raycaster.setFromCamera(this.pointerPos, this.camera);
+        const intersects = this.raycaster.intersectObjects([this.globe], false);
+        if (intersects.length > 0) {
+            this.globeUV.copy(intersects[0].uv);
+        }
+        this.uniforms.mouseUV.value = this.globeUV;
     }
 
     addEventListeners() {
-        // Mouse events
+        // Mouse events for drag rotation
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
@@ -246,6 +276,13 @@ class Globe {
     }
 
     onMouseMove(event) {
+        // Update pointer position for raycasting (normalized)
+        this.pointerPos.set(
+            (event.clientX / this.canvas.clientWidth) * 2 - 1,
+            -(event.clientY / this.canvas.clientHeight) * 2 + 1
+        );
+
+        // Handle drag rotation
         if (!this.isDragging) return;
 
         const deltaX = event.clientX - this.previousMousePosition.x;
@@ -307,7 +344,7 @@ class Globe {
 
         // Auto-rotate when not dragging
         if (!this.isDragging) {
-            this.globeGroup.rotation.y += 0.001;
+            this.globeGroup.rotation.y += 0.002;
             this.rotationVelocity.x *= 0.95;
             this.rotationVelocity.y *= 0.95;
         }
@@ -322,10 +359,8 @@ class Globe {
             this.stars.rotation.x += 0.0001;
         }
 
-        // Wireframe counter-rotation for effect
-        if (this.wireframe) {
-            this.wireframe.rotation.y -= 0.0003;
-        }
+        // Handle mouse raycasting for interactive effect
+        this.handleRaycast();
 
         this.renderer.render(this.scene, this.camera);
     }
