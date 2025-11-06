@@ -143,7 +143,8 @@ class Globe {
 
         // Set initial rotation to show Europe
         // Rotate to show Europe (around 15-20° East)
-        this.globeGroup.rotation.y = -0.3; // Negative rotation to show eastern hemisphere
+        this.globeGroup.rotation.y = -0.3; // Longitude - show eastern hemisphere
+        this.globeGroup.rotation.x = 0.2;  // Latitude - slight tilt to show northern hemisphere better
     }
 
     createStarfield() {
