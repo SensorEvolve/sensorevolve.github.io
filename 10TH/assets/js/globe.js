@@ -15,6 +15,7 @@ class Globe {
         this.isDragging = false;
         this.previousMousePosition = { x: 0, y: 0 };
         this.rotationVelocity = { x: 0, y: 0 };
+        this.scrollPosY = 0;
 
         this.init();
         this.createGlobe();
@@ -192,6 +193,11 @@ class Globe {
 
         // Window resize
         window.addEventListener('resize', this.onWindowResize.bind(this));
+
+        // Scroll tracking for scroll-based animations
+        window.addEventListener('scroll', () => {
+            this.scrollPosY = window.scrollY / document.body.clientHeight;
+        });
     }
 
     onMouseDown(event) {
@@ -262,21 +268,30 @@ class Globe {
     animate() {
         requestAnimationFrame(this.animate.bind(this));
 
+        // Scroll-based rotation
+        const goalRotationY = Math.PI * this.scrollPosY * 2;
+        const rate = 0.05;
+
         // Auto-rotate when not dragging
         if (!this.isDragging) {
-            this.globeGroup.rotation.y += 0.002;
+            // Smoothly interpolate to goal rotation based on scroll
+            this.globeGroup.rotation.y += (goalRotationY - this.globeGroup.rotation.y) * rate;
             this.rotationVelocity.x *= 0.95;
             this.rotationVelocity.y *= 0.95;
+
+            // Add gentle continuous rotation
+            this.globeGroup.rotation.y += 0.001;
+        } else {
+            // Apply rotation velocity from dragging
+            this.globeGroup.rotation.x += this.rotationVelocity.x;
+            this.globeGroup.rotation.y += this.rotationVelocity.y;
         }
 
-        // Apply rotation velocity
-        this.globeGroup.rotation.x += this.rotationVelocity.x;
-        this.globeGroup.rotation.y += this.rotationVelocity.y;
-
-        // Subtle star rotation
+        // Subtle star rotation with scroll influence
         if (this.stars) {
             this.stars.rotation.y += 0.0002;
             this.stars.rotation.x += 0.0001;
+            this.stars.position.z = -this.scrollPosY * 10;
         }
 
         this.renderer.render(this.scene, this.camera);

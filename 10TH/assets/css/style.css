@@ -176,19 +176,16 @@ h1, h2, h3, h4 {
     align-items: center;
     position: relative;
     padding: var(--spacing-xl) var(--spacing-md);
-    overflow: hidden;
+    overflow: visible;
 }
 
 .hero-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
-    align-items: center;
-    max-width: 1400px;
+    max-width: 800px;
     width: 100%;
     margin: 0 auto;
     z-index: 10;
     position: relative;
+    text-align: center;
 }
 
 .hero-text {
@@ -249,16 +246,17 @@ h1, h2, h3, h4 {
     box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
 }
 
-/* Globe Container - Right half of screen */
+/* Globe Container - Fixed background */
 .globe-container {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 600px;
+    height: 100vh;
+    z-index: -1;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 5;
-    pointer-events: none; /* Allow clicking through to content below */
 }
 
 #globe-canvas {
@@ -304,9 +302,11 @@ h1, h2, h3, h4 {
 /* About Section */
 .about {
     padding: var(--spacing-xl) var(--spacing-md);
-    background: var(--color-bg-light);
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(20px);
     position: relative;
     z-index: 10;
+    margin: var(--spacing-xl) 0;
 }
 
 .section-header {
@@ -389,9 +389,11 @@ h1, h2, h3, h4 {
 /* Projects Section */
 .projects {
     padding: var(--spacing-xl) var(--spacing-md);
-    background: var(--color-bg-dark);
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
     position: relative;
     z-index: 10;
+    margin: var(--spacing-xl) 0;
 }
 
 .projects-grid {
@@ -497,9 +499,11 @@ h1, h2, h3, h4 {
 /* Contact Section */
 .contact {
     padding: var(--spacing-xl) var(--spacing-md);
-    background: var(--color-bg-light);
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(20px);
     position: relative;
     z-index: 10;
+    margin: var(--spacing-xl) 0;
 }
 
 .contact-content {
