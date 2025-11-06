@@ -140,6 +140,10 @@ class Globe {
 
         const points = new THREE.Points(pointsGeo, pointsMat);
         this.globeGroup.add(points);
+
+        // Set initial rotation to show Europe
+        // Rotate to show Europe (around 15-20° East)
+        this.globeGroup.rotation.y = -0.3; // Negative rotation to show eastern hemisphere
     }
 
     createStarfield() {
