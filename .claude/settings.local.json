@@ -10,7 +10,13 @@
       "mcp__playwright__browser_network_requests",
       "mcp__playwright__browser_close",
       "Bash(start index.html)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(git rm:*)",
+      "Bash(rm -rf website analysis)",
+      "Bash(git mv:*)",
+      "Bash(git mv 10TH/.* .)",
+      "Bash(rmdir:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,317 +1,228 @@
-# SensorEvolve - Portfolio Website
+# 10TH Portfolio Website
 
-A modern, responsive portfolio website inspired by the Lando Norris design patterns. Features a dark theme with neon purple accents, smooth scrolling, and elegant animations.
+A stunning portfolio website inspired by landonorris.com, featuring a stylized Three.js globe, bold typography, and vibrant animations.
 
 ## 🎨 Design Features
 
-- **Signature Color:** Neon Purple (#a855f7)
-- **Theme:** Dark mode with high contrast
-- **Typography:** Inter variable font family
-- **Animations:** Smooth fade-in effects, hover interactions
-- **Layout:** Responsive grid system, mobile-first design
+- **Interactive Three.js Globe** - A stylized 3D globe with particles, glowing rings, and interactive rotation
+- **Bold Typography** - Large, impactful text inspired by modern sports branding
+- **Vibrant Color Palette** - Eye-catching gradients and accent colors
+- **Smooth Animations** - GSAP-powered scroll animations and transitions
+- **Responsive Design** - Fully responsive across all devices
+- **Modern UI/UX** - Clean, professional interface with engaging interactions
+
+## 🛠️ Tech Stack
+
+- **HTML5** - Semantic markup
+- **CSS3** - Modern styling with CSS Grid, Flexbox, and custom properties
+- **JavaScript (ES6+)** - Vanilla JS with class-based architecture
+- **Three.js** - 3D globe rendering and WebGL graphics
+- **GSAP** - Advanced animations and scroll-triggered effects
+- **ScrollTrigger** - Scroll-based animation plugin
 
 ## 📁 Project Structure
 
 ```
-generic_website/
-├── index.html          # Main HTML file
-├── styles.css          # All styles and responsive design
-├── app.js              # Interactive functionality
-├── README.md           # This file
-└── analysis/           # Lando Norris analysis files
-    ├── LANDONORRIS_ANALYSIS.md
-    ├── CSS_SNIPPETS.css
-    ├── QUICK_START_GUIDE.md
-    └── data.json
+10TH/
+├── index.html              # Main HTML file
+├── assets/
+│   ├── css/
+│   │   └── style.css      # Main stylesheet
+│   ├── js/
+│   │   ├── globe.js       # Three.js globe component
+│   │   ├── animations.js  # GSAP animations
+│   │   └── main.js        # General functionality
+│   └── images/            # Image assets (placeholder)
+└── README.md              # This file
 ```
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
-### Option 1: Open Locally
+### Quick Start
 
-1. Simply open `index.html` in your web browser
-2. No build process required - pure HTML/CSS/JS
+1. **Clone or download this folder**
+2. **Open `index.html` in a modern web browser**
+3. That's it! The site uses CDN links for libraries, so no build process is required.
 
-### Option 2: Use Live Server (Recommended)
+### Local Development
 
-If you have VS Code with Live Server extension:
-
-```bash
-# Right-click on index.html
-# Select "Open with Live Server"
-```
-
-Or use Python's built-in server:
+For local development with a proper server:
 
 ```bash
-cd generic_website
+# Using Python 3
 python -m http.server 8000
-# Open http://localhost:8000 in your browser
+
+# Using Node.js (if you have http-server installed)
+npx http-server
+
+# Using PHP
+php -S localhost:8000
 ```
 
-Or use Node.js with npx:
+Then open `http://localhost:8000` in your browser.
 
-```bash
-npx serve .
+## ✏️ Customization Guide
+
+### 1. Basic Information
+
+**Update the following placeholders in `index.html`:**
+
+- **Site Title** (line 6): Change "10TH - Portfolio Showcase"
+- **Hero Text** (lines 25-29): Update the three title lines
+- **Hero Subtitle** (line 30): Update the tagline
+- **About Section** (lines 42-82): Replace placeholder stats and feature descriptions
+- **Contact Information** (lines 180-194): Update email and social media links
+- **Footer** (lines 202-235): Update footer content and links
+
+### 2. Projects
+
+**Replace placeholder projects in `index.html` (lines 87-172):**
+
+For each project card, update:
+- `project-category` - Project type (Web Development, Mobile App, etc.)
+- `project-title` - Project name
+- `project-description` - Brief description
+- `project-tags` - Technology tags
+- `project-link` - Link to project (or remove if not applicable)
+- `project-placeholder` - Replace with actual images
+
+**To add project images:**
+```html
+<!-- Replace this: -->
+<div class="project-placeholder">PROJECT IMAGE</div>
+
+<!-- With this: -->
+<img src="assets/images/project-name.jpg" alt="Project Name">
 ```
 
-## 📄 Sections
+### 3. Colors
 
-### 1. Hero Section
-- Full-screen hero with large typography
-- Animated gradient text effect
-- Dual CTA buttons
-- Scroll indicator
-
-### 2. About Section
-- Two-column layout (content + image)
-- Stats grid showing achievements
-- Clean, readable typography
-
-### 3. Projects Section
-- Bento-box style grid layout
-- Hover effects on project cards
-- Technology tags
-- Varied card sizes for visual interest
-
-### 4. Skills Section
-- Four main categories:
-  - Hardware & Sensors
-  - Software Development
-  - Cloud & DevOps
-  - Data & Analytics
-- Icon-based cards with hover effects
-
-### 5. Contact Section
-- Contact information display
-- Functional contact form
-- Form validation
-- Success/error states
-
-### 6. Footer
-- Multi-column layout
-- Social links
-- Legal links
-- Copyright information
-
-## 🎯 Key Features
-
-### Smooth Scrolling
-- Custom smooth scroll implementation
-- Works with all anchor links
-- 1-second animation duration
-
-### Scroll Animations
-- Fade-in effect on scroll
-- Intersection Observer API for performance
-- Elements animate once when entering viewport
-
-### Navigation
-- Fixed navigation with scroll effect
-- Becomes opaque with backdrop blur on scroll
-- Active link highlighting based on current section
-- Fully responsive mobile menu
-
-### Form Handling
-- Client-side form validation
-- Loading states
-- Success/error feedback
-- Ready to connect to backend
-
-### Responsive Design
-- Mobile-first approach
-- Breakpoints at 768px and 992px
-- Touch-friendly navigation
-- Optimized for all screen sizes
-
-## 🎨 Color Palette
-
-```css
-/* Brand Colors */
---color--purple: #a855f7;           /* Primary accent */
---color--purple-dark: #7c3aed;      /* Hover states */
---color--purple-light: #c084fc;     /* Highlights */
-
-/* Dark Theme */
---color--dark: #0f0f23;             /* Main background */
---color--dark-tint-1: #1a1a2e;      /* Cards */
---color--dark-tint-2: #25253f;      /* Borders */
---color--black: #000000;            /* Footer */
-
-/* Neutrals */
---color--white: #f5f5f7;            /* Text on dark */
---color--grey: #9ca3af;             /* Secondary text */
-```
-
-## 📱 Responsive Breakpoints
-
-```css
-/* Desktop First */
-Default: 1400px max-width
-
-/* Tablet */
-@media (max-width: 992px)
-- Single column layouts
-- Adjusted typography
-
-/* Mobile */
-@media (max-width: 768px)
-- Mobile menu
-- Stacked sections
-- Full-width buttons
-
-/* Small Mobile */
-@media (max-width: 480px)
-- Reduced padding
-- Hidden scroll indicator
-```
-
-## 🛠️ Customization Guide
-
-### Change Colors
-
-Edit the CSS variables in `styles.css`:
+**Update color scheme in `assets/css/style.css` (lines 9-15):**
 
 ```css
 :root {
-  --color--purple: #your-color;
-  /* Change other colors as needed */
+    --color-primary: #FF6B35;      /* Orange accent */
+    --color-secondary: #00D9FF;    /* Cyan accent */
+    --color-accent: #F72585;       /* Pink accent */
+    --color-bg-dark: #0A0A0A;      /* Dark background */
+    --color-bg-light: #1A1A1A;     /* Light background */
+    --color-text-primary: #FFFFFF; /* Primary text */
+    --color-text-secondary: #B0B0B0; /* Secondary text */
 }
 ```
 
-### Add Your Images
+### 4. Logo
 
-Replace the placeholder divs with your images:
+**Replace "10TH" text with your logo:**
 
+Option 1 - Update text (line 16 in `index.html`):
 ```html
-<!-- Before -->
-<div class="image-placeholder">
-  <!-- Placeholder content -->
-</div>
-
-<!-- After -->
-<img src="your-image.jpg" alt="Description">
+<div class="logo">YOUR BRAND</div>
 ```
 
-### Update Content
-
-1. Edit text in `index.html`
-2. Update project cards
-3. Modify skills lists
-4. Change contact information
-
-### Connect Form to Backend
-
-In `app.js`, replace the form submission simulation:
-
-```javascript
-// Replace this:
-await new Promise(resolve => setTimeout(resolve, 1500));
-
-// With your actual API call:
-const response = await fetch('your-api-endpoint', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data)
-});
+Option 2 - Use image logo:
+```html
+<img src="assets/images/logo.svg" alt="Your Brand" class="logo">
 ```
 
-## 🚀 Deployment
+### 5. Globe Customization
 
-### Netlify (Recommended)
+**Modify globe appearance in `assets/js/globe.js`:**
 
-1. Create account at [netlify.com](https://netlify.com)
-2. Drag & drop the `generic_website` folder
-3. Site goes live instantly
-4. Free custom domain support
+- **Colors** (lines 58-71): Change globe material colors
+- **Size** (line 51): Adjust `SphereGeometry` radius
+- **Rotation Speed** (line 216): Modify auto-rotation speed
+- **Particles** (lines 97-130): Change particle count and colors
+- **Rings** (lines 85-95): Adjust ring colors and positions
 
-### Vercel
+### 6. Animations
 
-```bash
-npm i -g vercel
-vercel
-```
+**Customize animation timings in `assets/js/animations.js`:**
 
-### GitHub Pages
+- **Duration** (line 11): Change default animation duration
+- **Stagger** (line 13): Adjust stagger timing between elements
+- **Easing** (line 12): Modify animation easing functions
 
-1. Create GitHub repository
-2. Push code
-3. Enable GitHub Pages in repository settings
-4. Select branch and root folder
+## 📝 Content Checklist
 
-## ⚡ Performance Tips
+Before launching, replace all placeholders:
 
-### Already Implemented:
-- ✅ Debounced scroll events
-- ✅ Intersection Observer for animations
-- ✅ CSS transforms (GPU accelerated)
-- ✅ Passive event listeners
-- ✅ Minimal JavaScript
-- ✅ No external dependencies
+- [ ] Update site title and meta tags
+- [ ] Replace hero section text
+- [ ] Update about section content
+- [ ] Add real project information (6 projects included)
+- [ ] Replace project placeholder images
+- [ ] Update contact email and social media links
+- [ ] Replace "10TH" logo with your brand
+- [ ] Update footer links and content
+- [ ] Add real statistics in the stats section
+- [ ] Customize color scheme to match your brand
 
-### Further Optimization:
-- Add actual images and optimize with WebP format
-- Implement lazy loading for images
-- Minify CSS and JS for production
-- Add service worker for PWA functionality
+## 🎯 What You Need to Provide
 
-## 🎁 Features & Easter Eggs
+To complete the website, please provide:
 
-### Konami Code
-Try typing: ↑ ↑ ↓ ↓ ← → ← → B A
+1. **Brand Assets**
+   - Logo (SVG or PNG format)
+   - Brand colors (if different from current scheme)
+   - Favicon
 
-### Optional Enhancements
-Uncomment in `app.js` to enable:
-- Cursor glow effect following mouse
+2. **Content**
+   - Your actual project details (title, description, technologies, links)
+   - Project images (recommended size: 1200x800px)
+   - About section text and statistics
+   - Contact email and social media links
 
-## 📦 Browser Support
+3. **Images**
+   - High-quality project screenshots or mockups
+   - Any additional imagery for the about section
+   - Profile photo or team photo (optional)
 
-- ✅ Chrome 90+
-- ✅ Firefox 88+
-- ✅ Safari 14+
-- ✅ Edge 90+
-- ✅ Mobile browsers
+4. **Information**
+   - Your actual stats (projects completed, clients, awards, etc.)
+   - Technology stack preferences
+   - Any specific features or sections you want to add
 
-## 🔧 Tech Stack
+## 🌐 Browser Support
 
-- **HTML5** - Semantic markup
-- **CSS3** - Modern layouts (Grid, Flexbox)
-- **Vanilla JavaScript** - No frameworks
-- **Google Fonts** - Inter font family
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers (iOS Safari, Chrome Mobile)
 
-## 📝 Credits
+## 📦 Dependencies (CDN)
 
-- Design inspired by [landonorris.com](https://landonorris.com)
-- Icons: Hand-coded SVG
-- Font: [Inter](https://fonts.google.com/specimen/Inter) by Rasmus Andersson
+All dependencies are loaded via CDN:
+
+- Three.js r128
+- GSAP 3.12.2
+- ScrollTrigger (GSAP plugin)
+
+## 🔧 Optional Enhancements
+
+Consider adding:
+
+- **Blog section** for articles and updates
+- **Testimonials** from clients
+- **Skills section** with technology logos
+- **Timeline** showing your journey
+- **Dark/Light mode toggle**
+- **Multi-language support**
+- **Contact form backend** (currently placeholder)
+- **Analytics** (Google Analytics, Plausible, etc.)
+- **SEO optimization** (meta tags, structured data)
 
 ## 📄 License
 
-This is a portfolio template - feel free to use and customize for your own projects!
+This is a custom portfolio template. Feel free to use and modify it for your personal or commercial projects.
 
-## 🤝 Contributing
+## 🤝 Support
 
-Want to improve this template?
-1. Fork the repository
-2. Make your changes
-3. Submit a pull request
+For questions or issues, please provide:
+- Browser and version
+- Screenshot of the issue
+- Steps to reproduce
 
 ---
 
-**Built with 💜 by SensorEvolve**
-
-*For questions or feedback, reach out at hello@sensorevolve.com*
-
-## Browser Sync
-Best for: Cross-device testing, professional workflow
-
-  Pros:
-  - Syncs scroll/clicks across devices
-  - Test on phone/tablet simultaneously
-  - Auto-refresh on save
-  - Shows external IP (test on other devices)
-
-  How to use:
-  npx browser-sync start --server --files "*.html, *.css, *.js"
-
-
+**Built with 💫 inspiration from landonorris.com**
