@@ -16,7 +16,17 @@
       "Bash(git mv:*)",
       "Bash(git mv 10TH/.* .)",
       "Bash(rmdir:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(rm:*)",
+      "Bash(.gitignore)",
+      "Bash(python -m http.server:*)",
+      "mcp__github__get_file_contents",
+      "WebFetch(domain:github.com)",
+      "Bash(nul)",
+      "Bash(dir /s /b C:UserscarljDocumentsDevelopergeneric_website*.png)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
