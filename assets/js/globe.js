@@ -2,6 +2,7 @@
  * Three.js Globe with Vertex Shader Points
  * Based on https://github.com/bobbyroe/vertex-earth
  * Uses custom shaders to render Earth as elevated colored points
+ * Updated: 2025-01-08 - Added drone and mobile optimizations
  */
 
 import * as THREE from "three";
