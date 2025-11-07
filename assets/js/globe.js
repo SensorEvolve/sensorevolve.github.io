@@ -80,14 +80,14 @@ class Globe {
     const elevMap = textureLoader.load("./assets/textures/01_earthbump1k.jpg");
     const alphaMap = textureLoader.load("./assets/textures/02_earthspec1k.jpg");
 
-    // Wireframe sphere base
-    const wireGeo = new THREE.IcosahedronGeometry(radius, 10);
-    const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x202020,
-      wireframe: true,
-    });
-    const wireframe = new THREE.Mesh(wireGeo, wireMat);
-    this.globeGroup.add(wireframe);
+    // Wireframe sphere base (hidden)
+    // const wireGeo = new THREE.IcosahedronGeometry(radius, 10);
+    // const wireMat = new THREE.MeshBasicMaterial({
+    //   color: 0x202020,
+    //   wireframe: true,
+    // });
+    // const wireframe = new THREE.Mesh(wireGeo, wireMat);
+    // this.globeGroup.add(wireframe);
 
     // High-detail points geometry
     const detail = 120;
@@ -107,7 +107,7 @@ class Globe {
                 float elv = texture2D(elevTexture, vUv).r;
                 vec3 vNormal = normalMatrix * normal;
                 vVisible = step(0.0, dot(-normalize(mvPosition.xyz), normalize(vNormal)));
-                mvPosition.z += 0.35 * elv;
+                mvPosition.z += 0.15 * elv;
                 gl_PointSize = size;
                 gl_Position = projectionMatrix * mvPosition;
             }
@@ -123,6 +123,10 @@ class Globe {
 
             void main() {
                 if (floor(vVisible + 0.1) == 0.0) discard;
+
+                // Make points circular instead of square
+                vec2 center = gl_PointCoord - vec2(0.5);
+                if (length(center) > 0.5) discard;
 
                 // Calculate latitude from UV (-1 at south pole, 0 at equator, 1 at north pole)
                 float latitude = (vUv.y - 0.5) * 2.0;
@@ -152,14 +156,19 @@ class Globe {
                     tempColor = mix(tropicalColor, temperateColor, t);
                 }
 
-                float alpha = 1.0 - texture2D(alphaTexture, vUv).r;
-                gl_FragColor = vec4(tempColor, alpha);
+                // Make ocean areas black (opaque) to hide stars
+                float alphaMap = 1.0 - texture2D(alphaTexture, vUv).r;
+                vec3 oceanColor = vec3(0.0, 0.0, 0.0); // Black for oceans
+
+                // If alpha is low (ocean), use black; if high (land), use temperature color
+                vec3 finalColor = mix(oceanColor, tempColor, alphaMap);
+                gl_FragColor = vec4(finalColor, 1.0); // Fully opaque
             }
         `;
 
     // Shader uniforms
     const uniforms = {
-      size: { type: "f", value: 4.0 },
+      size: { type: "f", value: 5.0 },
       colorTexture: { type: "t", value: colorMap },
       elevTexture: { type: "t", value: elevMap },
       alphaTexture: { type: "t", value: alphaMap },

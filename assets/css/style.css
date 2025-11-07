@@ -482,6 +482,21 @@ h1, h2, h3, h4 {
     margin-bottom: var(--spacing-md);
 }
 
+.app-store-link {
+    display: inline-block;
+    margin-top: var(--spacing-sm);
+}
+
+.app-store-badge {
+    height: 40px;
+    width: auto;
+    transition: transform var(--transition-fast);
+}
+
+.app-store-badge:hover {
+    transform: scale(1.05);
+}
+
 .tag {
     background: var(--color-bg-dark);
     color: var(--color-text-primary);

@@ -3,6 +3,9 @@
  * General functionality and interactivity
  */
 
+// Register GSAP ScrollToPlugin
+gsap.registerPlugin(ScrollToPlugin);
+
 class PortfolioSite {
     constructor() {
         this.mobileMenuOpen = false;
