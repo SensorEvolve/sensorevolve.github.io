@@ -21,13 +21,19 @@ class Globe {
     this.scrollPosY = 0;
     this.yacht = null;
     this.yachtRing = null;
+    this.drone = null;
+    this.droneRing = null;
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
 
+    // Detect mobile devices
+    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     this.init();
     this.createGlobe();
-    this.createStarfield();
+    // this.createStarfield(); // Removed - too much visual noise
     this.addYacht();
+    this.addDrone();
     this.addEventListeners();
     this.animate();
   }
@@ -44,11 +50,13 @@ class Globe {
     // Renderer setup
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
-      antialias: true,
+      antialias: !this.isMobile, // Disable antialiasing on mobile for performance
       alpha: true,
+      powerPreference: "high-performance",
     });
     this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Limit pixel ratio on mobile to improve performance
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 2));
     this.renderer.setClearColor(0x0a0a0a, 1);
 
     // Create globe group
@@ -89,8 +97,8 @@ class Globe {
     // const wireframe = new THREE.Mesh(wireGeo, wireMat);
     // this.globeGroup.add(wireframe);
 
-    // High-detail points geometry
-    const detail = 120;
+    // High-detail points geometry (reduce on mobile for performance)
+    const detail = this.isMobile ? 80 : 120;
     const pointsGeo = new THREE.IcosahedronGeometry(radius, detail);
 
     // Vertex shader - elevates points based on elevation map
@@ -194,8 +202,10 @@ class Globe {
     const textureLoader = new THREE.TextureLoader();
     const starSprite = textureLoader.load("./assets/textures/circle.png");
 
-    this.stars = getStarfield({ numStars: 4500, sprite: starSprite });
-    this.scene.add(this.stars);
+    // Reduce stars on mobile for better performance
+    const numStars = this.isMobile ? 2000 : 4500;
+    this.stars = getStarfield({ numStars, sprite: starSprite });
+    // this.scene.add(this.stars);
   }
 
   addYacht() {
@@ -268,6 +278,74 @@ class Globe {
     );
   }
 
+  addDrone() {
+    // Place drone in North America / USA area: approximately 40°N, 100°W
+    const lat = 130; // degrees
+    const lon = 10; // degrees
+    const radius = 1.1; // Close to globe surface
+
+    // Convert lat/lon to 3D position
+    const phi = (90 - lat) * (Math.PI / 180);
+    const theta = (lon + 180) * (Math.PI / 180);
+
+    const x = -(radius * Math.sin(phi) * Math.cos(theta));
+    const z = radius * Math.sin(phi) * Math.sin(theta);
+    const y = radius * Math.cos(phi);
+
+    // Create breathing ring (blue for drone)
+    const ringGeometry = new THREE.RingGeometry(0.02, 0.025, 32);
+    const ringMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00d9ff,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.8,
+    });
+    this.droneRing = new THREE.Mesh(ringGeometry, ringMaterial);
+    this.droneRing.position.set(x, y, z);
+
+    // Orient ring to face outward from globe center
+    const ringNormal = new THREE.Vector3(x, y, z).normalize();
+    this.droneRing.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0, 0, 1),
+      ringNormal
+    );
+
+    this.globeGroup.add(this.droneRing);
+
+    // Load drone model
+    const loader = new GLTFLoader();
+    loader.load(
+      "./assets/3d/drone.glb",
+      (gltf) => {
+        this.drone = gltf.scene;
+        this.drone.scale.set(0.03, 0.03, 0.03);
+        this.drone.position.set(x, y, z);
+
+        // Orient drone to lie flat on globe surface (same approach as yacht)
+        const normal = new THREE.Vector3(x, y, z).normalize();
+
+        // First, orient drone to face outward from globe (lying flat)
+        this.drone.quaternion.setFromUnitVectors(
+          new THREE.Vector3(0, 1, 0), // Drone's default up axis
+          normal
+        );
+
+        // Then rotate around the normal axis for heading direction
+        const heading = 0; // Adjust to change drone direction
+        this.drone.rotateOnAxis(normal, heading);
+
+        // Make drone clickable
+        this.drone.userData.clickable = true;
+
+        this.globeGroup.add(this.drone);
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading drone model:", error);
+      }
+    );
+  }
+
   addEventListeners() {
     // Window resize
     window.addEventListener("resize", this.onWindowResize.bind(this));
@@ -292,11 +370,17 @@ class Globe {
     // Update raycaster
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
-    // Check for yacht intersection
+    // Check for yacht or drone intersection
+    let hasIntersection = false;
     if (this.yacht) {
-      const intersects = this.raycaster.intersectObject(this.yacht, true);
-      this.canvas.style.cursor = intersects.length > 0 ? "pointer" : "default";
+      const yachtIntersects = this.raycaster.intersectObject(this.yacht, true);
+      hasIntersection = yachtIntersects.length > 0;
     }
+    if (!hasIntersection && this.drone) {
+      const droneIntersects = this.raycaster.intersectObject(this.drone, true);
+      hasIntersection = droneIntersects.length > 0;
+    }
+    this.canvas.style.cursor = hasIntersection ? "pointer" : "default";
   }
 
   onYachtClick(event) {
@@ -309,9 +393,21 @@ class Globe {
 
     // Check for yacht intersection
     if (this.yacht) {
-      const intersects = this.raycaster.intersectObject(this.yacht, true);
-      if (intersects.length > 0) {
+      const yachtIntersects = this.raycaster.intersectObject(this.yacht, true);
+      if (yachtIntersects.length > 0) {
         // Scroll to projects section
+        document
+          .querySelector("#projects")
+          .scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+
+    // Check for drone intersection
+    if (this.drone) {
+      const droneIntersects = this.raycaster.intersectObject(this.drone, true);
+      if (droneIntersects.length > 0) {
+        // Scroll to projects section (or different section for drone)
         document
           .querySelector("#projects")
           .scrollIntoView({ behavior: "smooth" });
@@ -349,6 +445,14 @@ class Globe {
       const breathScale = 1 + Math.sin(time * 2) * 0.3;
       this.yachtRing.scale.set(breathScale, breathScale, 1);
       this.yachtRing.material.opacity = 0.5 + Math.sin(time * 2) * 0.3;
+    }
+
+    // Breathing animation for drone ring (slightly different timing)
+    if (this.droneRing) {
+      const time = Date.now() * 0.001;
+      const breathScale = 1 + Math.sin(time * 2.5) * 0.3;
+      this.droneRing.scale.set(breathScale, breathScale, 1);
+      this.droneRing.material.opacity = 0.5 + Math.sin(time * 2.5) * 0.3;
     }
 
     this.renderer.render(this.scene, this.camera);

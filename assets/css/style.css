@@ -721,15 +721,101 @@ h1, h2, h3, h4 {
 
     .hero-title {
         font-size: 2.5rem;
+        line-height: 1.1;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
     }
 
     .hero-content {
         grid-template-columns: 1fr;
+        padding: 0 var(--spacing-sm);
+        max-width: 100%;
     }
 
+    .hero {
+        min-height: 100vh;
+        min-height: 100svh; /* Use small viewport height for mobile browsers */
+        padding: var(--spacing-md) 0;
+    }
+
+    /* Globe container - ensure it fits mobile screen */
     .globe-container {
-        height: 300px;
-        opacity: 0.6;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100svh; /* Use small viewport height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #globe-canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100vw;
+        max-height: 100vh;
+        max-height: 100svh;
+    }
+
+    .cta-button {
+        font-size: 1rem;
+        padding: 0.875rem 1.75rem;
+    }
+
+    /* Section spacing for mobile */
+    .section-header {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    /* Better touch targets */
+    .nav-menu a,
+    .project-link,
+    .social-link {
+        padding: 0.75rem;
+    }
+
+    /* Container padding */
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    /* Stats layout on mobile */
+    .stats {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .stat-item {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Extra small devices (phones in portrait) */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.875rem;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+    }
+
+    .logo img {
+        height: 32px;
+        max-width: 100px;
     }
 }
 
