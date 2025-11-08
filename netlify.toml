@@ -5,29 +5,31 @@
   publish = "."
 
 [[headers]]
-  # Apply these headers to all routes
-  for = "/*"
+  # HTML files - short cache, always revalidate
+  for = "/*.html"
   [headers.values]
-    # Security headers
+    Cache-Control = "public, max-age=0, must-revalidate"
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-    # Cache static assets for 1 year
-    Cache-Control = "public, max-age=31536000, immutable"
-
 [[headers]]
-  # HTML files - don't cache as long
-  for = "/*.html"
+  # JavaScript and CSS files - shorter cache for easier updates
+  for = "/assets/js/*"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=3600, must-revalidate"
 
 [[headers]]
-  # Cache assets folder for 1 year
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  # Images and 3D models - longer cache
   for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=86400"
 
 # Redirects (if needed in future)
 [[redirects]]
