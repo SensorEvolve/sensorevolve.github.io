@@ -28,7 +28,8 @@
       "Bash(dir /s /b C:UserscarljDocumentsDevelopergeneric_website*.png)",
       "Bash(findstr:*)",
       "Bash(dir /b \"C:\\Users\\carlj\\Documents\\Developer\\generic_website\\assets\")",
-      "Bash(dir /s /b \"C:\\Users\\carlj\\Documents\\Developer\\generic_website\\assets\\*.png\")"
+      "Bash(dir /s /b \"C:\\Users\\carlj\\Documents\\Developer\\generic_website\\assets\\*.png\")",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []

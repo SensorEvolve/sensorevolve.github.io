@@ -111,25 +111,28 @@ function initScrollAnimations() {
             ease: "back.out(1.7)"
         });
 
-        // Animate the number counting
+        // Animate the number counting (only for numeric values)
         const numberElement = stat.querySelector('.stat-number');
         const finalNumber = parseInt(numberElement.textContent);
 
-        ScrollTrigger.create({
-            trigger: stat,
-            start: "top 85%",
-            onEnter: () => {
-                gsap.to(numberElement, {
-                    innerHTML: finalNumber,
-                    duration: 2,
-                    snap: { innerHTML: 1 },
-                    ease: "power2.out",
-                    onUpdate: function() {
-                        numberElement.innerHTML = Math.ceil(this.targets()[0].innerHTML) + '+';
-                    }
-                });
-            }
-        });
+        // Only animate if it's a valid number
+        if (!isNaN(finalNumber)) {
+            ScrollTrigger.create({
+                trigger: stat,
+                start: "top 85%",
+                onEnter: () => {
+                    gsap.to(numberElement, {
+                        innerHTML: finalNumber,
+                        duration: 2,
+                        snap: { innerHTML: 1 },
+                        ease: "power2.out",
+                        onUpdate: function() {
+                            numberElement.innerHTML = Math.ceil(this.targets()[0].innerHTML) + '+';
+                        }
+                    });
+                }
+            });
+        }
     });
 
     // Feature cards

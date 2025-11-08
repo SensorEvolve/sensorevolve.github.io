@@ -28,7 +28,10 @@ class Globe {
     this.mouse = new THREE.Vector2();
 
     // Detect mobile devices
-    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    this.isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
 
     this.init();
     this.createGlobe();
@@ -46,7 +49,7 @@ class Globe {
     // Camera setup
     const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
-    this.camera.position.set(0, 0, 3.5);
+    this.camera.position.set(0, 0, 2.8); // Zoomed in for better mobile/desktop view
 
     // Renderer setup
     this.renderer = new THREE.WebGLRenderer({
@@ -57,7 +60,9 @@ class Globe {
     });
     this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
     // Limit pixel ratio on mobile to improve performance
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 2));
+    this.renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 2)
+    );
     this.renderer.setClearColor(0x0a0a0a, 1);
 
     // Create globe group
@@ -74,10 +79,10 @@ class Globe {
     this.controls.dampingFactor = 0.05;
     this.controls.enableZoom = true;
     this.controls.enablePan = false;
-    this.controls.minDistance = 2;
+    this.controls.minDistance = 1.8; // Closer minimum zoom
     this.controls.maxDistance = 10;
     this.controls.autoRotate = true;
-    this.controls.autoRotateSpeed = 0.1;
+    this.controls.autoRotateSpeed = 0.05;
   }
 
   createGlobe() {
@@ -408,10 +413,11 @@ class Globe {
     if (this.drone) {
       const droneIntersects = this.raycaster.intersectObject(this.drone, true);
       if (droneIntersects.length > 0) {
-        // Scroll to projects section (or different section for drone)
-        document
-          .querySelector("#projects")
-          .scrollIntoView({ behavior: "smooth" });
+        // Scroll directly to AeroHub project (data-project="2")
+        const aerohubCard = document.querySelector('[data-project="2"]');
+        if (aerohubCard) {
+          aerohubCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       }
     }
   }
