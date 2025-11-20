@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SensorEvolve - App Portfolio</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170/build/three.module.js",
+            "jsm/": "https://cdn.jsdelivr.net/npm/three@0.170/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="#home">
+                    <span style="font-size: 1.5rem; font-weight: 700; color: #00d4ff;">SensorEvolve</span>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Globe -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="title-line glitch" data-text="FULL-STACK">FULL-STACK</span>
+                    <span class="title-line glitch" data-text="ENGINEER">ENGINEER</span>
+                </h1>
+                <p class="hero-subtitle">
+                    <span class="typing-text">Building production-ready applications from concept to deployment</span>
+                </p>
+                <a href="#projects">
+                    <button class="cta-button">
+                        <span class="button-text">Explore Projects</span>
+                        <span class="button-icon">→</span>
+                    </button>
+                </a>
+            </div>
+            <div class="globe-container">
+                <canvas id="globe-canvas"></canvas>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <span>Scroll</span>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">ABOUT</span>
+                <h2 class="section-title">Full-Stack Innovation</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="lead-text">
+                        Specializing in end-to-end product development—from concept to deployment.
+                        I architect scalable backend systems, craft intuitive user experiences, and
+                        deliver production-ready applications across mobile, web, and emerging platforms.
+                    </p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6+</div>
+                            <div class="stat-label">Production Apps</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Platforms</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">IAP</div>
+                            <div class="stat-label">Payment Systems</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-features">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                        <h3>Complete Stack Ownership</h3>
+                        <p>Backend architecture, frontend polish, DevOps automation, and UX design—I build it all</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-check-circle"></i></div>
+                        <h3>Production-Ready Quality</h3>
+                        <p>Real-time systems, distributed databases, CI/CD pipelines, and App Store deployments</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-network-wired"></i></div>
+                        <h3>Cross-Platform Expertise</h3>
+                        <p>React Native for iOS/Android/Web, Three.js for 3D experiences, blockchain integrations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">PORTFOLIO</span>
+                <h2 class="section-title">Featured Projects</h2>
+            </div>
+            <div class="projects-grid">
+                <!-- Project Card 1 -->
+                <article class="project-card" data-project="1">
+                    <div class="project-image">
+                        <img src="assets/superyacht_project_image.png" alt="Superyacht Tracker Application">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Maritime Technology · Full-Stack Mobile</span>
+                        <h3 class="project-title">Superyacht Tracker</h3>
+                        <p class="project-description">
+                            End-to-end iOS application design and development for real-time superyacht tracking.
+                            <strong>Frontend:</strong> Custom React Native UI with Mapbox GL integration, gesture-based
+                            navigation, offline-first architecture, and smooth animations. <strong>Backend:</strong>
+                            Node.js microservices handling AIS data ingestion, WebSocket server for live position
+                            broadcasts, PostgreSQL with PostGIS for geospatial queries, Redis caching layer, and
+                            RESTful API with JWT authentication. <strong>UX/UI Design:</strong> User research with
+                            yacht operators, wireframing and prototyping in Figma, responsive layouts optimized for
+                            marine environments, dark mode implementation, and accessibility features. <strong>Infrastructure:</strong>
+                            AWS deployment with EC2, RDS, ElastiCache, CloudFront CDN, automated CI/CD pipeline,
+                            monitoring with CloudWatch, and App Store deployment workflow.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React Native</span>
+                            <span class="tag">iOS</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">PostgreSQL</span>
+                            <span class="tag">PostGIS</span>
+                            <span class="tag">Redis</span>
+                            <span class="tag">WebSocket</span>
+                            <span class="tag">Mapbox GL</span>
+                            <span class="tag">AWS</span>
+                            <span class="tag">RESTful API</span>
+                            <span class="tag">JWT Auth</span>
+                            <span class="tag">UX/UI Design</span>
+                            <span class="tag">Figma</span>
+                            <span class="tag">CI/CD</span>
+                            <span class="tag">AIS Protocol</span>
+                        </div>
+                        <a href="https://apps.apple.com/us/app/superyacht-tracker/id6753971583" target="_blank" class="app-store-link">
+                            <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" class="app-store-badge">
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Project Card 2: Arc Helper -->
+                <article class="project-card" data-project="2">
+                    <div class="project-image">
+                        <img src="https://sensorevolve.github.io/arc_helper_support/icon.png" alt="Arc Helper App">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Gaming Companion · Cross-Platform Mobile</span>
+                        <h3 class="project-title">Arc Helper</h3>
+                        <p class="project-description">
+                            Ultimate companion app for Arc Raiders with comprehensive game databases and guides.
+                            <strong>Frontend:</strong> React Native with TypeScript deployed to iOS, Android, and Web,
+                            featuring Material Top Tabs navigation, dark-themed UI matching game aesthetics, and
+                            responsive layouts optimized for mobile gameplay reference. <strong>Content:</strong>
+                            30+ weapons database across 7 categories with detailed stats, 15 ARC enemy types with
+                            weaknesses and strategies, 4 raid location maps with interactive viewing, 45 skills
+                            across 3 skill trees, complete crafting stations and workshop guides, trader information,
+                            and ammunition reference tables. <strong>Monetization:</strong> Google AdMob integration
+                            with banner and interstitial ads, production-ready with EAS build configuration.
+                            <strong>Architecture:</strong> Local JSON data storage for offline functionality, reusable
+                            component library, custom theme system, and comprehensive TypeScript type safety.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React Native</span>
+                            <span class="tag">TypeScript</span>
+                            <span class="tag">iOS</span>
+                            <span class="tag">Android</span>
+                            <span class="tag">Web</span>
+                            <span class="tag">Expo</span>
+                            <span class="tag">AdMob</span>
+                            <span class="tag">Gaming</span>
+                            <span class="tag">Database</span>
+                            <span class="tag">UX/UI Design</span>
+                        </div>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <a href="https://apps.apple.com/app/arc-helper/id6740062047" target="_blank" class="app-store-link">
+                                <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" class="app-store-badge">
+                            </a>
+                            <a href="https://sensorevolve.github.io/arc_helper_support" target="_blank" class="project-link">Support & Info →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Project Card 3 -->
+                <article class="project-card" data-project="3">
+                    <div class="project-image">
+                        <img src="assets/aerohub.png" alt="AeroHub Platform">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Web Platform & Manufacturing</span>
+                        <h3 class="project-title">AeroHub</h3>
+                        <p class="project-description">
+                            Decentralized manufacturing platform connecting European 3D printer operators for
+                            on-demand drone component production. Built with React and Three.js for interactive
+                            3D model visualization, WebGL-based component viewer with zoom/rotate controls,
+                            real-time demand dashboard using WebSocket connections, automated logistics API
+                            integration for pre-paid shipping labels, and smart contract implementation for
+                            trustless payment processing. Backend features distributed job allocation algorithms,
+                            quality control tracking systems, geospatial routing for optimal hub selection, and
+                            blockchain integration for transparent transaction records.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Three.js</span>
+                            <span class="tag">WebGL</span>
+                            <span class="tag">Smart Contracts</span>
+                            <span class="tag">Web3</span>
+                            <span class="tag">WebSocket</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">Logistics API</span>
+                            <span class="tag">Geospatial</span>
+                            <span class="tag">Distributed Systems</span>
+                        </div>
+                        <a href="https://aerohub.netlify.app/" target="_blank" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 3 -->
+                <article class="project-card" data-project="3">
+                    <div class="project-image">
+                        <img src="assets/switchero.png" alt="Switchero App">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Cross-Platform App · Multimedia Database</span>
+                        <h3 class="project-title">Switchero</h3>
+                        <p class="project-description">
+                            Complete cross-platform solution for mechanical keyboard switch comparison and discovery.
+                            <strong>Frontend:</strong> React Native codebase deployed to iOS, Android, and web with
+                            responsive UI, interactive audio playback, and advanced filtering. <strong>Backend:</strong>
+                            Node.js API managing extensive multimedia databases with image storage (AWS S3), audio
+                            file CDN delivery, MongoDB for switch specifications, full-text search with Elasticsearch,
+                            and Redis caching for performance. <strong>Multimedia Processing:</strong> Automated audio
+                            normalization pipeline, image optimization and compression, batch processing workflows,
+                            and CDN integration. <strong>Features:</strong> Real-time audio waveform visualization,
+                            side-by-side comparison tool, brand filtering with 15+ manufacturers, tactile/linear/clicky
+                            categorization, user favorites and collections, and community sound submissions with
+                            moderation queue.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React Native</span>
+                            <span class="tag">iOS</span>
+                            <span class="tag">Android</span>
+                            <span class="tag">Web</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">MongoDB</span>
+                            <span class="tag">AWS S3</span>
+                            <span class="tag">Elasticsearch</span>
+                            <span class="tag">Redis</span>
+                            <span class="tag">Audio Processing</span>
+                            <span class="tag">Image Optimization</span>
+                            <span class="tag">CDN</span>
+                            <span class="tag">UX/UI Design</span>
+                        </div>
+                        <a href="https://switchero.app/" target="_blank" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 4 -->
+                <article class="project-card" data-project="4">
+                    <div class="project-image">
+                        <img src="assets/mildb.jpg" alt="MilDB Reference Database">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Reference Database · Big Data</span>
+                        <h3 class="project-title">MilDB - Military Equipment Reference Database</h3>
+                        <p class="project-description">
+                            Comprehensive public reference database cataloging publicly available information about military
+                            equipment worldwide - vehicles, aircraft, naval vessels, and systems specifications from open sources.
+                            <strong>Data Architecture:</strong> PostgreSQL cluster with partitioning for millions of records,
+                            Elasticsearch for full-text search across technical specifications, Redis for query caching,
+                            and data pipeline for automated ingestion from public sources and manufacturer data. <strong>Frontend:</strong>
+                            React-based interface with advanced filtering, comparison matrices, technical specification
+                            viewers, interactive 3D model integration, and export capabilities for research and education.
+                            <strong>Backend:</strong> Node.js microservices architecture handling complex queries, user
+                            authentication, audit logging, data versioning for historical tracking, and API rate limiting.
+                            <strong>Features:</strong> Multi-dimensional search across equipment types, countries, and
+                            specifications, relationship mapping between equipment variants, comparison tools for analysts
+                            and enthusiasts, and automated classification system with ML-powered categorization of public data.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">PostgreSQL</span>
+                            <span class="tag">Elasticsearch</span>
+                            <span class="tag">Redis</span>
+                            <span class="tag">Big Data</span>
+                            <span class="tag">Data Pipeline</span>
+                            <span class="tag">Authentication</span>
+                            <span class="tag">Machine Learning</span>
+                            <span class="tag">Microservices</span>
+                            <span class="tag">API Design</span>
+                            <span class="tag">Data Aggregation</span>
+                        </div>
+                        <a href="https://github.com/SensorEvolve/mildb-app" target="_blank" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 5 -->
+                <article class="project-card" data-project="5">
+                    <div class="project-image">
+                        <img src="assets/tarot_of_us.jpg" alt="Tarot of Us Game">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Mobile Game · Social Entertainment</span>
+                        <h3 class="project-title">Tarot of Us</h3>
+                        <p class="project-description">
+                            Interactive mobile conversation game blending tarot-inspired prompts with social gameplay mechanics.
+                            <strong>Frontend:</strong> React Native with TypeScript featuring advanced animations using React
+                            Native Reanimated for smooth card reveal effects, gesture-based interactions, and custom animated
+                            transitions between states. <strong>Game Mechanics:</strong> 30 unique cards across 5 thematic decks
+                            (Heart, Spark, Shadow, Spirit, Trickster), multiplayer support for group play, timer-based challenges,
+                            mystery modifier system, and progressive reveal mechanics. <strong>UX/Polish:</strong> Expo Haptics
+                            integration for tactile feedback on card interactions, Expo AV for ambient audio and sound effects,
+                            custom linear gradient backgrounds for each deck theme, smooth micro-interactions, and intuitive
+                            gesture controls. <strong>Architecture:</strong> Type-safe data models with TypeScript, modular card
+                            deck system, state management for game flow, and component-based architecture for reusability.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">React Native</span>
+                            <span class="tag">TypeScript</span>
+                            <span class="tag">Expo</span>
+                            <span class="tag">Reanimated</span>
+                            <span class="tag">Game Development</span>
+                            <span class="tag">Haptic Feedback</span>
+                            <span class="tag">Audio Integration</span>
+                            <span class="tag">Animations</span>
+                            <span class="tag">Multiplayer</span>
+                            <span class="tag">UX Design</span>
+                            <span class="tag">iOS/Android</span>
+                        </div>
+                        <a href="https://github.com/SensorEvolve/tarot-of-us" target="_blank" class="project-link">View Project →</a>
+                    </div>
+                </article>
+
+                <!-- Project Card 6 -->
+                <article class="project-card" data-project="6">
+                    <div class="project-image">
+                        <img src="assets/macrovault.png" alt="MacroVault.nvim Plugin">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Developer Tools · Open Source</span>
+                        <h3 class="project-title">MacroVault.nvim</h3>
+                        <p class="project-description">
+                            Modern Neovim plugin for persistent macro management, built with Lua for the developer tools ecosystem.
+                            <strong>Core Features:</strong> Disk persistence with JSON storage, 100 macro slots with auto-save functionality,
+                            interactive TUI with floating window interface, and comprehensive command API. <strong>Architecture:</strong>
+                            Written in Lua with proper Neovim API integration, modular plugin structure following nvim best practices,
+                            configuration via setup() pattern, and cross-platform file system handling. <strong>User Experience:</strong>
+                            Floating window UI with keyboard navigation, interactive add/edit workflows, live macro preview before execution,
+                            and configurable borders and styling. <strong>Developer Tools:</strong> Full API for programmatic macro management,
+                            supports Lazy.nvim, Packer, and vim-plug package managers, includes 10 essential default macros for common tasks,
+                            and documentation with extensive examples. <strong>Technical Implementation:</strong> JSON-based persistence layer,
+                            safe character escaping with Lua long strings, efficient storage in nvim data directory, and automatic backup/reload
+                            mechanisms.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">Lua</span>
+                            <span class="tag">Neovim Plugin</span>
+                            <span class="tag">Developer Tools</span>
+                            <span class="tag">Open Source</span>
+                            <span class="tag">TUI</span>
+                            <span class="tag">JSON Storage</span>
+                            <span class="tag">API Design</span>
+                            <span class="tag">CLI Tools</span>
+                            <span class="tag">Documentation</span>
+                        </div>
+                        <a href="https://github.com/SensorEvolve/macrovault.nvim" target="_blank" class="project-link">View Project →</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-text">
+                    <span class="section-label">GET IN TOUCH</span>
+                    <h2 class="section-title">Let's Create Something Amazing</h2>
+                    <p class="lead-text">
+                        Ready to bring your vision to life? Let's collaborate and build
+                        something extraordinary together.
+                    </p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <strong>Email</strong>
+                            <a href="mailto:contact@sensorevolve.com">contact@sensorevolve.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <strong>Social</strong>
+                            <div class="social-links">
+                                <a href="#" class="social-link">Twitter</a>
+                                <a href="#" class="social-link">LinkedIn</a>
+                                <a href="#" class="social-link">GitHub</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="cta-button">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <a href="#home">
+                            <span style="font-size: 1.5rem; font-weight: 700; color: #00d4ff;">SensorEvolve</span>
+                        </a>
+                    </div>
+                    <p>Showcasing innovation worldwide</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Navigate</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#projects">Projects</a></li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Connect</h4>
+                        <ul>
+                            <li><a href="#">Twitter</a></li>
+                            <li><a href="#">LinkedIn</a></li>
+                            <li><a href="#">GitHub</a></li>
+                            <li><a href="#">Dribbble</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SensorEvolve. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script type="module" src="assets/js/globe.js"></script>
+    <script src="assets/js/animations.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

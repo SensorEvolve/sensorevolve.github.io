@@ -1,0 +1,13 @@
+{
+  "posts": [
+    {
+      "slug": "2025-11-10-setup-blog-system",
+      "title": "November 10, 2025",
+      "date": "2025-11-10",
+      "category": "journal",
+      "excerpt": "Set up a complete blog and journal system for the portfolio website with automated journal generation from git activity. Implemented markdown-based po...",
+      "path": "blog/posts/journal/2025-11-10-setup-blog-system.md"
+    }
+  ],
+  "lastUpdated": "2025-11-10T10:18:34.647Z"
+}
