@@ -21,7 +21,7 @@ A professional full-stack portfolio website featuring an interactive Three.js gl
 
 ## 📁 Project Structure
 
-```
+```bash
 generic_website/
 ├── index.html                      # Main HTML file
 ├── netlify.toml                    # Netlify deployment config
@@ -73,6 +73,7 @@ The site is configured for automatic Netlify deployment:
 3. Site publishes from root directory (configured in `netlify.toml`)
 
 **Cache Configuration:**
+
 - HTML: Always revalidate (max-age=0)
 - CSS/JS: 1 hour cache (max-age=3600)
 - Images: 24 hour cache (max-age=86400)
@@ -82,6 +83,7 @@ The site is configured for automatic Netlify deployment:
 ### Adding a New 3D Model to the Globe
 
 **Step 1: Prepare your GLB model**
+
 - Place the `.glb` file in `assets/3d/`
 - Recommended: Keep file size under 50MB for performance
 
@@ -195,12 +197,14 @@ if (intersects[0].object.parent === this.yourModel) {
 **Location:** `assets/js/globe.js`
 
 **Geometry Detail** (line 101):
+
 ```javascript
 const detail = this.isMobile ? 80 : 120; // Lower = faster, Higher = smoother
 ```
 
 **Temperature Gradient Colors** (lines 116-158):
 Edit the fragment shader colors:
+
 ```javascript
 vec3 polarColor = vec3(1.0, 1.0, 1.0);        // White poles
 vec3 arcticColor = vec3(0.7, 0.85, 1.0);      // Light blue arctic
@@ -209,26 +213,31 @@ vec3 tropicalColor = vec3(1.0, 0.4, 0.2);     // Red/orange tropical
 ```
 
 **Elevation Multiplier** (line 106):
+
 ```javascript
 const elevationScale = 0.03; // Increase for more pronounced terrain
 ```
 
 **Globe Rotation Speed** (line 336):
+
 ```javascript
 this.globeGroup.rotation.y += 0.0005; // Increase for faster rotation
 ```
 
 **Model Scale** (inside each `addModel()` method):
+
 ```javascript
 this.yacht.scale.set(0.06, 0.06, 0.06); // Adjust all three values
 ```
 
 **Model Position Offset** (radius value):
+
 ```javascript
 const radius = 1.01;  // 1.0 = on surface, higher = farther out
 ```
 
 **Ring Colors**:
+
 ```javascript
 color: 0xff0000,  // Red for yacht
 color: 0x0000ff,  // Blue for drone
@@ -245,6 +254,7 @@ To position models on the globe:
 4. Use these values for `lat` and `lon` in your code
 
 **Examples:**
+
 - Mediterranean Sea (yacht): `lat = 145, lon = -20`
 - North America (drone): `lat = 40, lon = -100`
 - Tokyo: `lat = 35.6762, lon = 139.6503`
@@ -274,6 +284,7 @@ Edit CSS variables in `assets/css/style.css` (lines 7-16):
 Update project information in `index.html`:
 
 **Project structure** (starts around line 122):
+
 ```html
 <article class="project-card" data-project="1">
     <div class="project-image">
@@ -353,6 +364,7 @@ git revert HEAD
 4. Copy an existing project card
 5. Update all the details (image, title, description, tags, link)
 6. Commit and push:
+
 ```bash
 git add assets/yourimage.png index.html
 git commit -m "Add new project: Project Name"
@@ -365,6 +377,7 @@ git push
 2. Find the About section (around line 65)
 3. Update the text, stats, or feature cards
 4. Commit and push:
+
 ```bash
 git add index.html
 git commit -m "Update about section"
@@ -377,31 +390,37 @@ git push
 2. Open `index.html`
 3. Find logo references (lines ~22 and ~402)
 4. Update the image src:
+
 ```html
 <img src="assets/your_logo.png" alt="Your Logo">
 ```
+
 5. Adjust size in `assets/css/style.css` (line 124-130)
 
 ## 🐛 Troubleshooting
 
 ### Globe not loading
+
 - Check browser console for errors (F12)
 - Verify texture files exist in `assets/textures/`
 - Check if Three.js CDN is accessible
 
 ### 3D model not appearing
+
 - Verify `.glb` file path is correct
 - Check file size (should be < 50MB)
 - Look for console errors
 - Verify model scale (try increasing/decreasing)
 
 ### Changes not showing on Netlify
+
 - Do a hard refresh: `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
 - Check Netlify deploy log for errors
 - Verify git push was successful
 - Check netlify.toml cache settings
 
 ### Mobile performance issues
+
 - Reduce globe detail (line 101 in globe.js)
 - Optimize 3D model file sizes
 - Reduce texture resolution
@@ -409,6 +428,7 @@ git push
 ## 📱 Mobile Optimization
 
 The site automatically detects mobile devices and applies:
+
 - Reduced globe geometry detail (80 vs 120 segments)
 - Disabled antialiasing for performance
 - Limited pixel ratio to 1.5x
@@ -464,12 +484,6 @@ The site automatically detects mobile devices and applies:
 - [ ] Integrate analytics (Google Analytics 4)
 
 ## 🤝 Support
-
-For issues or questions:
-1. Check browser console for errors (F12 → Console)
-2. Review this README for common solutions
-3. Check git commit history for recent changes
-4. Verify all file paths are correct
 
 ---
 
