@@ -5,7 +5,7 @@
 /* Blog Header */
 .blog-header {
     padding: 120px 0 60px;
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(247, 37, 133, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(194, 254, 11, 0.05) 0%, rgba(255, 45, 120, 0.05) 100%);
 }
 
 .blog-header .section-header {
@@ -94,7 +94,7 @@
 .post-card:hover {
     border-color: var(--color-primary);
     transform: translateY(-4px);
-    box-shadow: 0 8px 32px rgba(255, 107, 53, 0.2);
+    box-shadow: 0 8px 32px rgba(194, 254, 11, 0.2);
 }
 
 .post-card.hidden {
@@ -113,12 +113,12 @@
 }
 
 .post-category.journal {
-    background: rgba(0, 217, 255, 0.1);
+    background: rgba(255, 45, 120, 0.1);
     color: var(--color-secondary);
 }
 
 .post-category.notebook {
-    background: rgba(247, 37, 133, 0.1);
+    background: rgba(0, 207, 255, 0.1);
     color: var(--color-accent);
 }
 
@@ -219,7 +219,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(10, 10, 10, 0.95);
+    background: rgba(8, 12, 20, 0.95);
     backdrop-filter: blur(10px);
 }
 

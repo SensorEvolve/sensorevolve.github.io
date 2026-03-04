@@ -97,114 +97,37 @@ class PortfolioSite {
     }
 
     /**
-     * Contact form handling
+     * Terminal contact animation + copy email
      */
     setupContactForm() {
-        const form = document.querySelector('.contact-form');
+        // Animate terminal lines in sequence when section scrolls into view
+        const lines = document.querySelectorAll('.t-line');
+        if (lines.length) {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    lines.forEach((line, i) => {
+                        setTimeout(() => line.classList.add('visible'), i * 120);
+                    });
+                    observer.disconnect();
+                }
+            }, { threshold: 0.3 });
+            observer.observe(document.querySelector('.terminal-box'));
+        }
 
-        if (!form) return;
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            // Show loading state
-            const submitButton = form.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Sending...';
-            submitButton.disabled = true;
-
-            // Simulate form submission (replace with actual API call)
-            setTimeout(() => {
-                // Show success message
-                this.showNotification('Message sent successfully! We\'ll get back to you soon.', 'success');
-
-                // Reset form
-                form.reset();
-
-                // Reset button
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-
-                // In production, replace with actual form submission:
-                // fetch('/api/contact', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(data)
-                // })
-                // .then(response => response.json())
-                // .then(data => {
-                //     this.showNotification('Message sent successfully!', 'success');
-                //     form.reset();
-                // })
-                // .catch(error => {
-                //     this.showNotification('Error sending message. Please try again.', 'error');
-                // });
-            }, 1500);
-        });
-
-        // Form validation
-        const inputs = form.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('blur', () => {
-                this.validateInput(input);
+        // Copy email to clipboard
+        const copyBtn = document.getElementById('copyEmailBtn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText('sensorevolve@gmail.com').then(() => {
+                    const orig = copyBtn.textContent;
+                    copyBtn.textContent = '[ COPIED! ]';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyBtn.textContent = orig;
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                });
             });
-        });
-    }
-
-    /**
-     * Validate form input
-     */
-    validateInput(input) {
-        const value = input.value.trim();
-
-        if (input.hasAttribute('required') && !value) {
-            this.showInputError(input, 'This field is required');
-            return false;
-        }
-
-        if (input.type === 'email' && value) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) {
-                this.showInputError(input, 'Please enter a valid email');
-                return false;
-            }
-        }
-
-        this.clearInputError(input);
-        return true;
-    }
-
-    /**
-     * Show input error
-     */
-    showInputError(input, message) {
-        input.style.borderColor = 'var(--color-accent)';
-
-        let errorElement = input.parentElement.querySelector('.input-error');
-        if (!errorElement) {
-            errorElement = document.createElement('span');
-            errorElement.className = 'input-error';
-            errorElement.style.color = 'var(--color-accent)';
-            errorElement.style.fontSize = '0.875rem';
-            errorElement.style.marginTop = '0.5rem';
-            errorElement.style.display = 'block';
-            input.parentElement.appendChild(errorElement);
-        }
-
-        errorElement.textContent = message;
-    }
-
-    /**
-     * Clear input error
-     */
-    clearInputError(input) {
-        input.style.borderColor = '';
-        const errorElement = input.parentElement.querySelector('.input-error');
-        if (errorElement) {
-            errorElement.remove();
         }
     }
 

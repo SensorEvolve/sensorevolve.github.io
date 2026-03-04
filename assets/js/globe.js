@@ -63,7 +63,7 @@ class Globe {
     this.renderer.setPixelRatio(
       Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 2)
     );
-    this.renderer.setClearColor(0x0a0a0a, 1);
+    this.renderer.setClearColor(0x080c14, 1);
 
     // Create globe group
     this.globeGroup = new THREE.Group();
@@ -152,7 +152,7 @@ class Globe {
                 vec3 polarColor = vec3(1.0, 1.0, 1.0);        // White for poles
                 vec3 arcticColor = vec3(0.7, 0.85, 1.0);      // Light blue for arctic
                 vec3 temperateColor = vec3(1.0, 0.8, 0.3);    // Yellow/orange for temperate
-                vec3 tropicalColor = vec3(1.0, 0.4, 0.2);     // Red/orange for tropical
+                vec3 tropicalColor = vec3(0.76, 1.0, 0.04);   // Acid lime for tropical
 
                 // Blend colors based on latitude
                 vec3 tempColor;
@@ -231,7 +231,7 @@ class Globe {
     // Create breathing ring
     const ringGeometry = new THREE.RingGeometry(0.02, 0.025, 32);
     const ringMaterial = new THREE.MeshBasicMaterial({
-      color: 0xff0000,
+      color: 0xc2fe0b,
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.8,
@@ -301,7 +301,7 @@ class Globe {
     // Create breathing ring (blue for drone)
     const ringGeometry = new THREE.RingGeometry(0.02, 0.025, 32);
     const ringMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00d9ff,
+      color: 0xff2d78,
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.8,
