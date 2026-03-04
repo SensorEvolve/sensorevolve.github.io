@@ -121,12 +121,20 @@ h1, h2, h3, h4 {
     align-items: center;
 }
 
-.logo img {
-    height: 60px;
-    width: auto;
-    max-width: 120px;
-    object-fit: contain;
-    display: block;
+.logo-text {
+    font-family: 'Arial Black', 'Arial Bold', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    color: var(--color-secondary);
+    text-shadow: 0 0 20px rgba(255, 45, 120, 0.6), 0 0 40px rgba(255, 45, 120, 0.2);
+    line-height: 1;
+}
+
+.logo-text span {
+    color: var(--color-text-primary);
+    text-shadow: none;
 }
 
 .nav-menu {
